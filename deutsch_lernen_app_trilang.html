@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deutsch Lernen — Trilingual</title>
+<meta name="theme-color" content="#0ea5e9">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='48' fill='%230ea5e9'/%3E%3Ctext x='128' y='156' font-size='120' text-anchor='middle' fill='white' font-family='Arial, sans-serif'%3EDE%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --primary:#0ea5e9; --primary-dark:#0284c7; --success:#22c55e; --danger:#ef4444; --muted:#93a3b8;
+  --bg:#0b1020; --surface:#0f172a; --card:#101827; --text:#e5e7eb; --border:#1f2a3a;
+  --r:14px; --shadow:0 10px 30px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#0b1020,#0b1020 40%,#0d1326);color:var(--text)}
+header{position:sticky;top:0;z-index:10;background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:var(--shadow);padding:10px 12px}
+h1{margin:4px 0;text-align:center;font-weight:800}
+nav{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+nav ul{margin:0;padding:0;list-style:none;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+nav a{color:white;text-decoration:none;padding:8px 12px;border-radius:999px}
+nav a.active, nav a:hover{background:rgba(255,255,255,.18)}
+.lang-wrap{margin-left:8px;display:flex;align-items:center;gap:6px}
+.lang-wrap select{background:rgba(0,0,0,.2);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:6px 8px}
+main{max-width:1100px;margin:0 auto;padding:16px;min-height:calc(100vh - 140px)}
+h2{color:#7dd3fc;margin:6px 0 14px}
+.tab-content{display:none;animation:fade .25s ease-in} .tab-content.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin:12px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{background:var(--primary);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;transition:.2s}
+button.ghost{background:#0b1222;border:1px solid var(--border);color:#cbd5e1}
+button:hover{filter:brightness(.96);transform:translateY(-1px)}
+select,input[type="search"]{width:100%;padding:10px 12px;border-radius:10px;border:2px solid var(--border);background:#0b1222;color:#e5e7eb}
+label{color:#93c5fd;font-size:.95rem}
+.badge{background:#0b1222;border:1px solid var(--border);padding:4px 8px;border-radius:999px;color:#93c5fd}
+.item{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.item strong{color:#7dd3fc}
+.muted{color:var(--muted)}
+/* Quiz */
+#progress{height:8px;background:#0b1222;border-radius:999px;overflow:hidden}
+#bar{height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--success))}
+.opt{padding:12px;border:2px solid var(--border);border-radius:12px;margin:8px 0;background:#0b1222;cursor:pointer;font-weight:600}
+.opt.correct{background:var(--success);border-color:var(--success);color:#04110a}
+.opt.wrong{background:var(--danger);border-color:var(--danger);color:#fff}
+.opt.dis{pointer-events:none;opacity:.85}
+/* Flip cards (fixed mirroring via backface-visibility) */
+#flipWrap{display:flex;justify-content:center;margin:16px 0}
+#flip{width:340px;max-width:100%;height:210px;perspective:1000px}
+#flip .inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s}
+#flip.flipped .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border:2px solid var(--border);border-radius:16px;background:#0b1222;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;box-shadow:var(--shadow);
+  -webkit-backface-visibility:hidden; backface-visibility:hidden;}
+.back{transform:rotateY(180deg);background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#04110a;font-weight:800;
+  -webkit-backface-visibility:hidden; backface-visibility:hidden;}
+#counter{min-width:72px;text-align:center;color:#93c5fd}
+.dlg-bubble{padding:10px 12px;border-radius:12px;margin:6px 0;max-width:90%}
+.dlg-de{background:#102030;border:1px solid #1f2937}
+.dlg-ru{font-size:.9rem;color:#9ca3af;margin-top:4px}
+@media (max-width:420px){nav a{padding:6px 8px} h1{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="ui-title">Deutsch Lernen</h1>
+  <nav>
+    <ul id="tabs">
+      <li><a href="#lessons" data-tab="lessons" class="active" id="nav-lessons">Уроки</a></li>
+      <li><a href="#dictionary" data-tab="dictionary" id="nav-dict">Словарь</a></li>
+      <li><a href="#test" data-tab="test" id="nav-test">Тест</a></li>
+      <li><a href="#grammar" data-tab="grammar" id="nav-gram">Грамматика</a></li>
+      <li><a href="#cards" data-tab="cards" id="nav-cards">Карточки</a></li>
+      <li><a href="#dialogs" data-tab="dialogs" id="nav-dialogs">Диалоги</a></li>
+    </ul>
+    <div class="lang-wrap">
+      <label for="ui-lang" id="ui-lang-label">Язык интерфейса</label>
+      <select id="ui-lang">
+        <option value="ru">Русский</option>
+        <option value="az">Azərbaycanca</option>
+        <option value="de">Deutsch</option>
+      </select>
+      <label for="trans-lang" id="trans-lang-label">Перевод на</label>
+      <select id="trans-lang">
+        <option value="ru">Русский</option>
+        <option value="az">Azərbaycanca</option>
+      </select>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- LESSONS -->
+  <section id="lessons" class="tab-content active">
+    <h2 id="h-lessons">Уроки</h2>
+    <div class="card">
+      <div class="row">
+        <div style="flex:1">
+          <label for="lesson-filter" id="label-lesson-topic">Тема уроков</label>
+          <select id="lesson-filter"></select>
+        </div>
+        <div><span class="badge" id="lesson-count"></span></div>
+      </div>
+    </div>
+    <div id="lessons-list"></div>
+  </section>
+
+  <!-- DICTIONARY -->
+  <section id="dictionary" class="tab-content">
+    <h2 id="h-dict">Словарь</h2>
+    <div class="card">
+      <div class="row">
+        <div style="flex:2">
+          <label id="label-search">Поиск</label>
+          <input id="q" type="search" placeholder="Наберите слово по-немецки или по-русски…">
+        </div>
+        <div style="flex:1">
+          <label for="topic" id="label-topic">Тема</label>
+          <select id="topic"></select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <button id="onlyFav" class="ghost">Только избранное</button>
+          <button id="exportBtn" class="ghost">Экспорт</button>
+          <label for="importFile" class="ghost" style="display:inline-block;padding:10px 14px;cursor:pointer" id="btn-import">Импорт</label>
+          <input id="importFile" type="file" accept="application/json" style="display:none">
+        </div>
+      </div>
+    </div>
+    <div id="dict"></div>
+  </section>
+
+  <!-- TEST -->
+  <section id="test" class="tab-content">
+    <h2 id="h-test">Тест</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div id="progText" class="badge">0 / 30</div>
+        <div style="flex:1"></div>
+      </div>
+      <div id="progress"><div id="bar"></div></div>
+      <div id="question" style="font-size:18px;font-weight:800;margin:14px 0"></div>
+      <div id="options"></div>
+      <div id="final" style="display:none;text-align:center;margin-top:10px">
+        <div id="scoreText" style="font-size:20px;margin:8px 0 12px"></div>
+        <button id="again" class="ghost">Повторить тест</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRAMMAR -->
+  <section id="grammar" class="tab-content">
+    <h2 id="h-gram">Грамматика</h2>
+    <div id="grammar-list"></div>
+  </section>
+
+  <!-- CARDS -->
+  <section id="cards" class="tab-content">
+    <h2 id="h-cards">Карточки</h2>
+    <div class="card">
+      <div class="row">
+        <div style="flex:1">
+          <label for="cards-topic" id="label-cards-topic">Тема карточек</label>
+          <select id="cards-topic"></select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <button id="cards-only-fav" class="ghost">Избранное</button>
+          <button id="say" class="ghost">🔊 Озвучить</button>
+        </div>
+      </div>
+    </div>
+    <div id="flipWrap">
+      <div id="flip">
+        <div class="inner">
+          <div class="face front"><div id="frontText"></div></div>
+          <div class="face back"><div id="backText"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="justify-content:center">
+      <button id="prev" class="ghost">◀</button>
+      <div id="counter">1 / 1</div>
+      <button id="next" class="ghost">▶</button>
+      <button id="flipBtn">Перевернуть</button>
+    </div>
+  </section>
+
+  <!-- DIALOGS -->
+  <section id="dialogs" class="tab-content">
+    <h2 id="h-dialogs">Диалоги (повседневные темы)</h2>
+    <div class="card">
+      <div class="row">
+        <div style="flex:1">
+          <label for="dlg-topic" id="label-dlg-topic">Тема</label>
+          <select id="dlg-topic"></select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <button id="playdlg" class="ghost">🔊 Озвучить (DE)</button>
+        </div>
+      </div>
+    </div>
+    <div id="dlg-box" class="card" style="display:flex;flex-direction:column"></div>
+  </section>
+</main>
+
+<script>
+// =================== UI TEXTS (RU/AZ/DE) ===================
+const UI = {
+  ru:{ title:"Deutsch Lernen",
+    nav:{lessons:"Уроки",dict:"Словарь",test:"Тест",gram:"Грамматика",cards:"Карточки",dialogs:"Диалоги"},
+    labels:{
+      uiLang:"Язык интерфейса", transLang:"Перевод на",
+      lessonTopic:"Тема уроков", lessons:"Уроки",
+      search:"Поиск", topic:"Тема", onlyFav:"Только избранное", export:"Экспорт", import:"Импорт",
+      test:"Тест", again:"Повторить тест",
+      grammar:"Грамматика",
+      cards:"Карточки", cardsTopic:"Тема карточек", fav:"Избранное", speak:"🔊 Озвучить", flip:"Перевернуть",
+      dialogs:"Диалоги (повседневные темы)", dlgTopic:"Тема", playDlg:"🔊 Озвучить (DE)"
+    }
+  },
+  az:{ title:"Deutsch Lernen",
+    nav:{lessons:"Dərslər",dict:"Lüğət",test:"Test",gram:"Qrammatika",cards:"Kartlar",dialogs:"Dialoqlar"},
+    labels:{
+      uiLang:"İnterfeys dili", transLang:"Tərcümə dili",
+      lessonTopic:"Dərs mövzusu", lessons:"Dərslər",
+      search:"Axtarış", topic:"Mövzu", onlyFav:"Yalnız sevimlilər", export:"İxrac", import:"İdxal",
+      test:"Test", again:"Təkrar et",
+      grammar:"Qrammatika",
+      cards:"Kartlar", cardsTopic:"Kart mövzusu", fav:"Sevimlilər", speak:"🔊 Səsləndir", flip:"Çevir",
+      dialogs:"Dialoqlar (gündəlik mövzular)", dlgTopic:"Mövzu", playDlg:"🔊 Səsləndir (DE)"
+    }
+  },
+  de:{ title:"Deutsch Lernen",
+    nav:{lessons:"Lektionen",dict:"Wörterbuch",test:"Test",gram:"Grammatik",cards:"Karten",dialogs:"Dialoge"},
+    labels:{
+      uiLang:"Oberflächensprache", transLang:"Übersetzung in",
+      lessonTopic:"Thema der Lektionen", lessons:"Lektionen",
+      search:"Suche", topic:"Thema", onlyFav:"Nur Favoriten", export:"Export", import:"Import",
+      test:"Test", again:"Nochmal",
+      grammar:"Grammatik",
+      cards:"Karten", cardsTopic:"Kartenthema", fav:"Favoriten", speak:"🔊 Vorlesen", flip:"Umdrehen",
+      dialogs:"Dialoge (Alltag)", dlgTopic:"Thema", playDlg:"🔊 Vorlesen (DE)"
+    }
+  }
+};
+
+let uiLang = localStorage.getItem('uiLang') || 'ru';
+let transLang = localStorage.getItem('transLang') || 'ru';
+
+function applyUI(){
+  const L = UI[uiLang];
+  document.getElementById('ui-title').textContent = L.title;
+  document.getElementById('nav-lessons').textContent = L.nav.lessons;
+  document.getElementById('nav-dict').textContent = L.nav.dict;
+  document.getElementById('nav-test').textContent = L.nav.test;
+  document.getElementById('nav-gram').textContent = L.nav.gram;
+  document.getElementById('nav-cards').textContent = L.nav.cards;
+  document.getElementById('nav-dialogs').textContent = L.nav.dialogs;
+  document.getElementById('ui-lang-label').textContent = L.labels.uiLang;
+  document.getElementById('trans-lang-label').textContent = L.labels.transLang;
+  document.getElementById('h-lessons').textContent = L.labels.lessons;
+  document.getElementById('label-lesson-topic').textContent = L.labels.lessonTopic;
+  document.getElementById('h-dict').textContent = L.nav.dict;
+  document.getElementById('label-search').textContent = L.labels.search;
+  document.getElementById('label-topic').textContent = L.labels.topic;
+  document.getElementById('onlyFav').textContent = (document.getElementById('onlyFav').dataset.on==='1') ? (L.labels.onlyFav + ' ✓') : L.labels.onlyFav;
+  document.getElementById('exportBtn').textContent = L.labels.export;
+  document.getElementById('btn-import').textContent = L.labels.import;
+  document.getElementById('h-test').textContent = L.labels.test;
+  document.getElementById('again').textContent = L.labels.again;
+  document.getElementById('h-gram').textContent = L.labels.grammar;
+  document.getElementById('h-cards').textContent = L.labels.cards;
+  document.getElementById('label-cards-topic').textContent = L.labels.cardsTopic;
+  document.getElementById('cards-only-fav').textContent = (document.getElementById('cards-only-fav').dataset.on==='1') ? (L.labels.fav + ' ✓') : L.labels.fav;
+  document.getElementById('say').textContent = L.labels.speak;
+  document.getElementById('flipBtn').textContent = L.labels.flip;
+  document.getElementById('h-dialogs').textContent = L.labels.dialogs;
+  document.getElementById('label-dlg-topic').textContent = L.labels.dlgTopic;
+  document.getElementById('playdlg').textContent = L.labels.playDlg;
+  // placeholders
+  document.getElementById('q').placeholder = (uiLang==='de') ? "Wort auf Deutsch oder Übersetzung eingeben…" : (uiLang==='az' ? "Alman və ya tərcümə sözünü yazın…" : "Наберите слово по-немецки или перевод…");
+}
+
+// =================== ДАННЫЕ ===================
+const TOPICS = [
+  "Основы","Числа","Цвета","Семья","Дом","Еда","Путешествия","Покупки","Транспорт",
+  "Работа и учёба","Время и погода","Здоровье","Город","Связь","Ежедневные дела"
+];
+
+// Словарь с тройными переводами (DE + RU + AZ)
+const vocabulary = [
+  // Основы
+  {t:"Основы", de:"Hallo", ru:"Привет", az:"Salam", ipa:"ˈhalo"},
+  {t:"Основы", de:"Guten Tag", ru:"Добрый день", az:"Günorta salamı", ipa:"ˌɡuːtn̩ ˈtaːk"},
+  {t:"Основы", de:"Danke", ru:"Спасибо", az:"Təşəkkürlər", ipa:"ˈdaŋkə"},
+  {t:"Основы", de:"Bitte", ru:"Пожалуйста (пожалуйста/в ответ)", az:"Buyurun / Zəhmət olmasa", ipa:"ˈbɪtə"},
+  {t:"Основы", de:"Entschuldigung", ru:"Извините", az:"Bağışlayın", ipa:"ɛntˈʃʊldɪɡʊŋ"},
+  {t:"Основы", de:"Wie heißen Sie?", ru:"Как Вас зовут?", az:"Adınız nədir?", ipa:"viː ˈhaɪ̯sən ziː"},
+  {t:"Основы", de:"Ich heiße …", ru:"Меня зовут …", az:"Mənim adım …", ipa:"ɪç ˈhaɪ̯sə"},
+  {t:"Основы", de:"Wie geht's?", ru:"Как дела?", az:"Necəsiniz?", ipa:"viː ˈɡeːts"},
+  {t:"Основы", de:"Auf Wiedersehen!", ru:"До свидания!", az:"Sağ olun / Hələlik!", ipa:"aʊ̯f ˈviːdɐˌzeːən"},
+  // Числа
+  {t:"Числа", de:"eins", ru:"один", az:"bir", ipa:"aɪ̯ns"},
+  {t:"Числа", de:"zwei", ru:"два", az:"iki", ipa:"t͡svaɪ̯"},
+  {t:"Числа", de:"drei", ru:"три", az:"üç", ipa:"dʁaɪ̯"},
+  {t:"Числа", de:"vier", ru:"четыре", az:"dörd", ipa:"fiːɐ̯"},
+  {t:"Числа", de:"fünf", ru:"пять", az:"beş", ipa:"fʏnf"},
+  {t:"Числа", de:"sechs", ru:"шесть", az:"altı", ipa:"zɛks"},
+  {t:"Числа", de:"sieben", ru:"семь", az:"yeddi", ipa:"ˈziːbn̩"},
+  {t:"Числа", de:"acht", ru:"восемь", az:"səkkiz", ipa:"axt"},
+  {t:"Числа", de:"neun", ru:"девять", az:"doqquz", ipa:"nɔʏ̯n"},
+  {t:"Числа", de:"zehn", ru:"десять", az:"on", ipa:"tseːn"},
+  // Цвета
+  {t:"Цвета", de:"rot", ru:"красный", az:"qırmızı", ipa:"ʁoːt"},
+  {t:"Цвета", de:"blau", ru:"синий", az:"göy", ipa:"blaʊ̯"},
+  {t:"Цвета", de:"grün", ru:"зелёный", az:"yaşıl", ipa:"ɡʁyːn"},
+  {t:"Цвета", de:"gelb", ru:"жёлтый", az:"sarı", ipa:"ɡɛlp"},
+  {t:"Цвета", de:"schwarz", ru:"чёрный", az:"qara", ipa:"ʃvaʁts"},
+  {t:"Цвета", de:"weiß", ru:"белый", az:"ağ", ipa:"vaɪ̯s"},
+  // Семья
+  {t:"Семья", de:"die Familie", ru:"семья", az:"ailə", ipa:"diː faˈmiːli̯ə"},
+  {t:"Семья", de:"der Vater", ru:"отец", az:"ata", ipa:"deːɐ̯ ˈfaːtɐ"},
+  {t:"Семья", de:"die Mutter", ru:"мать", az:"ana", ipa:"diː ˈmʊtɐ"},
+  {t:"Семья", de:"der Sohn", ru:"сын", az:"oğul", ipa:"zoːn"},
+  {t:"Семья", de:"die Tochter", ru:"дочь", az:"qız övladı", ipa:"ˈtɔxtɐ"},
+  {t:"Семья", de:"der Bruder", ru:"брат", az:"qardaş", ipa:"ˈbʁuːdɐ"},
+  {t:"Семья", de:"die Schwester", ru:"сестра", az:"bacı", ipa:"ˈʃvɛstɐ"},
+  // Дом
+  {t:"Дом", de:"das Haus", ru:"дом", az:"ev", ipa:"haʊ̯s"},
+  {t:"Дом", de:"die Wohnung", ru:"квартира", az:"mənzil", ipa:"ˈvoːnʊŋ"},
+  {t:"Дом", de:"das Zimmer", ru:"комната", az:"otaq", ipa:"ˈtsɪmɐ"},
+  {t:"Дом", de:"die Küche", ru:"кухня", az:"mətbəx", ipa:"ˈkʏçə"},
+  {t:"Дом", de:"das Badezimmer", ru:"ванная", az:"hamam otağı", ipa:"ˈbaːdətsɪmɐ"},
+  // Еда
+  {t:"Еда", de:"das Brot", ru:"хлеб", az:"çörək", ipa:"bʁoːt"},
+  {t:"Еда", de:"die Milch", ru:"молоко", az:"süd", ipa:"mɪlç"},
+  {t:"Еда", de:"das Wasser", ru:"вода", az:"su", ipa:"ˈvasɐ"},
+  {t:"Еда", de:"der Kaffee", ru:"кофе", az:"qəhvə", ipa:"ˈkafe"},
+  {t:"Еда", de:"der Tee", ru:"чай", az:"çay", ipa:"teː"},
+  {t:"Еда", de:"die Rechnung, bitte", ru:"Счёт, пожалуйста", az:"Hesab, zəhmət olmasa", ipa:"ˈʁɛçnʊŋ"},
+  // Путешествия
+  {t:"Путешествия", de:"der Bahnhof", ru:"вокзал", az:"dəmir yolu vağzalı", ipa:"ˈbaːnhoːf"},
+  {t:"Путешествия", de:"der Flughafen", ru:"аэропорт", az:"hava limanı", ipa:"ˈfluːkˌhaːfn̩"},
+  {t:"Путешествия", de:"das Ticket", ru:"билет", az:"bilet", ipa:"ˈtɪkət"},
+  {t:"Путешествия", de:"Wo ist die Haltestelle?", ru:"Где остановка?", az:"Dayanacaq haradadır?", ipa:""},
+  // Покупки
+  {t:"Покупки", de:"der Preis", ru:"цена", az:"qiymət", ipa:"pʁaɪ̯s"},
+  {t:"Покупки", de:"Wie viel kostet das?", ru:"Сколько это стоит?", az:"Bu neçəyədir?", ipa:""},
+  {t:"Покупки", de:"bar / mit Karte", ru:"наличными / картой", az:"nağd / kartla", ipa:""},
+  {t:"Покупки", de:"die Größe", ru:"размер (одежды)", az:"ölçü", ipa:"ˈɡʁøːsə"},
+  // Транспорт
+  {t:"Транспорт", de:"die U-Bahn", ru:"метро", az:"metro", ipa:""},
+  {t:"Транспорт", de:"Fährt dieser Zug nach …?", ru:"Этот поезд идёт до …?", az:"Bu qatar … gedirmi?", ipa:""},
+  // Работа и учёба
+  {t:"Работа и учёба", de:"der Beruf", ru:"профессия", az:"peşə", ipa:"bəˈʁuːf"},
+  {t:"Работа и учёба", de:"der Lehrer / die Lehrerin", ru:"учитель / учительница", az:"müəllim / müəllimə", ipa:""},
+  {t:"Работа и учёба", de:"die Prüfung", ru:"экзамен", az:"imtahan", ipa:"ˈpʁyːfʊŋ"},
+  // Время и погода
+  {t:"Время и погода", de:"heute / gestern / morgen", ru:"сегодня / вчера / завтра", az:"bu gün / dünən / sabah", ipa:""},
+  {t:"Время и погода", de:"Es ist kalt / warm", ru:"Холодно / тепло", az:"Hava soyuq / isti", ipa:""},
+  {t:"Время и погода", de:"Wie ist das Wetter?", ru:"Какая погода?", az:"Hava necədir?", ipa:""},
+  // Здоровье
+  {t:"Здоровье", de:"der Arzt / die Ärztin", ru:"врач (м/ж)", az:"həkim", ipa:""},
+  {t:"Здоровье", de:"Ich fühle mich nicht gut", ru:"Мне нехорошо", az:"Özümü yaxşı hiss etmirəm", ipa:""},
+  {t:"Здоровье", de:"die Apotheke", ru:"аптека", az:"apteka", ipa:""},
+  // Город
+  {t:"Город", de:"das Zentrum", ru:"центр", az:"mərkəz", ipa:""},
+  {t:"Город", de:"die Straße", ru:"улица", az:"küçə", ipa:""},
+  {t:"Город", de:"der Park", ru:"парк", az:"park", ipa:""},
+  {t:"Город", de:"Entschuldigung, wo ist …?", ru:"Извините, где …?", az:"Bağışlayın, … haradadır?", ipa:""},
+  // Связь
+  {t:"Связь", de:"Haben Sie WLAN?", ru:"У вас есть Wi‑Fi?", az:"Sizdə Wi‑Fi var?", ipa:""},
+  {t:"Связь", de:"Das funktioniert nicht", ru:"Это не работает", az:"Bu işləmir", ipa:""},
+  // Ежедневные дела
+  {t:"Ежедневные дела", de:"aufstehen", ru:"вставать", az:"yuxudan durmaq", ipa:""},
+  {t:"Ежедневные дела", de:"einkaufen", ru:"покупать продукты", az:"alış-veriş etmək", ipa:""},
+  {t:"Ежедневные дела", de:"kochen", ru:"готовить", az:"bişirmək", ipa:""},
+];
+
+// Уроки (те же темы) — компактно
+const lessons = [
+  { id:"basics", topic:"Основы", title:"Приветствия и знакомство",
+    phrases:[
+      {de:"Hallo! Wie heißen Sie?", ru:"Здравствуйте! Как Вас зовут?", az:"Salam! Adınız nədir?"},
+      {de:"Ich heiße Shax. Freut mich!", ru:"Меня зовут Шакс. Приятно познакомиться!", az:"Mənim adım Şaxdır. Tanış olduğuma şadam!"},
+      {de:"Wie geht's?", ru:"Как дела?", az:"Necəsiniz?"},
+      {de:"Gut, danke. Und Ihnen?", ru:"Хорошо, спасибо. А у Вас?", az:"Yaxşı, sağ olun. Bəs siz?"},
+    ],
+    dialog:[
+      {de:"Guten Tag! Ich heiße Max.", ru:"Добрый день! Меня зовут Макс.", az:"Günortanız xeyir! Mənim adım Maksdır."},
+      {de:"Wie heißen Sie?", ru:"Как Вас зовут?", az:"Adınız nədir?"},
+      {de:"Freut mich!", ru:"Приятно познакомиться!", az:"Tanış olmaq xoşdur!"}
+    ]
+  },
+  { id:"shopping", topic:"Покупки", title:"В магазине одежды",
+    phrases:[
+      {de:"Haben Sie die Jacke in Größe M?", ru:"У вас есть куртка размера M?", az:"Bu gödəkçənin M ölçüsü var?"},
+      {de:"Kann ich mit Karte bezahlen?", ru:"Можно оплатить картой?", az:"Kartla ödəyə bilərəm?"},
+    ],
+    dialog:[
+      {de:"Die Umkleidekabine ist dort.", ru:"Примерочная там.", az:"Geyinmə kabinası ordadır."},
+      {de:"Sieht gut aus!", ru:"Выглядит хорошо!", az:"Yaxşı görünür!"}
+    ]
+  },
+  { id:"travel", topic:"Путешествия", title:"В пути",
+    phrases:[
+      {de:"Wo ist die Haltestelle?", ru:"Где остановка?", az:"Dayanacaq haradadır?"},
+      {de:"Ein Ticket nach Berlin, bitte.", ru:"Билет до Берлина, пожалуйста.", az:"Berlina bilet, zəhmət olmasa."}
+    ],
+    dialog:[
+      {de:"Einfach oder hin und zurück?", ru:"В одну сторону или туда‑обратно?", az:"Tək gediş, yoxsa gediş‑dönüş?"},
+      {de:"Hin und zurück, bitte.", ru:"Туда‑обратно, пожалуйста.", az:"Gediş‑dönüş, zəhmət olmasa."}
+    ]
+  },
+  { id:"doctor", topic:"Здоровье", title:"У врача",
+    phrases:[
+      {de:"Ich fühle mich nicht gut.", ru:"Мне нехорошо.", az:"Özümü yaxşı hiss etmirəm."},
+      {de:"Haben Sie Schmerzen?", ru:"У вас есть боль?", az:"Ağrınız var?"},
+    ],
+    dialog:[
+      {de:"Bitte nehmen Sie Platz.", ru:"Пожалуйста, присаживайтесь.", az:"Zəhmət olmasa, əyləşin."},
+      {de:"Wir messen die Temperatur.", ru:"Измерим температуру.", az:"Temperaturanızı ölçəcəyik."}
+    ]
+  },
+  { id:"cafe", topic:"Еда", title:"В кафе",
+    phrases:[
+      {de:"Ich möchte einen Kaffee und ein Wasser.", ru:"Я хочу кофе и воду.", az:"Mən bir qəhvə və su istəyirəm."},
+      {de:"Die Rechnung, bitte.", ru:"Счёт, пожалуйста.", az:"Hesab, zəhmət olmasa."},
+    ],
+    dialog:[
+      {de:"Kommt sofort!", ru:"Сейчас принесу!", az:"İndicə gətirirəm!"},
+      {de:"Guten Appetit!", ru:"Приятного аппетита!", az:"Nuş olsun!"}
+    ]
+  }
+];
+
+// Грамматика
+const grammar = [
+  { title:"Артикли (der, die, das) и множественное число",
+    points:[
+      "der — мужской; die — женский; das — средний род.",
+      "Nicht bestimmt: ein (m/n), eine (f).",
+      "Plural обычно с артиклем die."
+    ],
+    examples:[
+      {de:"der Mann — die Männer", ru:"мужчина — мужчины", az:"kişi — kişilər"},
+      {de:"die Frau — die Frauen", ru:"женщина — женщины", az:"qadın — qadınlar"},
+      {de:"das Kind — die Kinder", ru:"ребёнок — дети", az:"uşaq — uşaqlar"}
+    ]
+  },
+  { title:"Порядок слов (V2)",
+    points:[
+      "В простом предложении сказуемое на втором месте (V2).",
+      "В общем вопросе — глагол на первом месте."
+    ],
+    examples:[
+      {de:"Ich trinke Kaffee.", ru:"Я пью кофе.", az:"Mən qəhvə içirəm."},
+      {de:"Trinken Sie Kaffee?", ru:"Вы пьёте кофе?", az:"Siz qəhvə içirsiniz?"}
+    ]
+  },
+  { title:"Sein и Haben (Präsens)",
+    points:["sein: ich bin, du bist, er/sie/es ist, wir sind, ihr seid, sie/Sie sind",
+            "haben: ich habe, du hast, er/sie/es hat, wir haben, ihr habt, sie/Sie haben"],
+    examples:[
+      {de:"Ich bin Lehrer.", ru:"Я учитель.", az:"Mən müəlliməm."},
+      {de:"Wir haben Zeit.", ru:"У нас есть время.", az:"Bizim vaxtımız var."}
+    ]
+  }
+];
+
+// Диалоги — расширенные (10 тем)
+const dialogs = {
+  "Кафе":[
+    {de:"Was möchten Sie bestellen?", ru:"Что будете заказывать?", az:"Nə sifariş etmək istəyirsiniz?"},
+    {de:"Einen Cappuccino und ein Wasser, bitte.", ru:"Капучино и воду, пожалуйста.", az:"Bir kapuçino və su, zəhmət olmasa."},
+    {de:"Noch etwas?", ru:"Ещё что‑нибудь?", az:"Başqa nə isə?"},
+    {de:"Das ist alles. Danke!", ru:"Это всё. Спасибо!", az:"Bu qədər. Təşəkkürlər!"}
+  ],
+  "Отель":[
+    {de:"Ich habe eine Reservierung auf den Namen Shax.", ru:"У меня бронь на имя Шакс.", az:"Şax adına rezervasiyam var."},
+    {de:"Ihr Zimmer ist im dritten Stock.", ru:"Ваш номер на третьем этаже.", az:"Sizin otağınız üçüncü mərtəbədədir."},
+    {de:"Hier ist die Schlüsselkarte.", ru:"Вот ключ‑карта.", az:"Buyurun, açar kartınız."}
+  ],
+  "Транспорт":[
+    {de:"Fährt dieser Bus zum Zentrum?", ru:"Этот автобус идёт в центр?", az:"Bu avtobus mərkəzə gedir?"},
+    {de:"Ja, steigen Sie bitte ein.", ru:"Да, заходите, пожалуйста.", az:"Bəli, buyurun, minin."}
+  ],
+  "Банк":[
+    {de:"Ich möchte ein Konto eröffnen.", ru:"Я хочу открыть счёт.", az:"Hesab açmaq istəyirəm."},
+    {de:"Haben Sie Ihren Ausweis dabei?", ru:"У вас есть удостоверение личности?", az:"Şəxsiyyət vəsiqəniz yanınızdadır?"}
+  ],
+  "Почта":[
+    {de:"Ich möchte ein Paket schicken.", ru:"Хочу отправить посылку.", az:"Bir bağlama göndərmək istəyirəm."},
+    {de:"Wohin geht das Paket?", ru:"Куда отправляется посылка?", az:"Bağlama hara göndərilir?"}
+  ],
+  "Аренда":[
+    {de:"Gibt es eine Zwei‑Zimmer‑Wohnung?", ru:"Есть двухкомнатная квартира?", az:"İki otaqlı mənzil varmı?"},
+    {de:"Die Miete beträgt 800 Euro.", ru:"Аренда — 800 евро.", az:"Kirayə 800 avrodur."}
+  ],
+  "Супермаркет":[
+    {de:"Wo finde ich die Milch?", ru:"Где найти молоко?", az:"Südü harada tapa bilərəm?"},
+    {de:"Im Kühlregal links.", ru:"В холодильнике слева.", az:"Soldakı soyuducudadır."}
+  ],
+  "Интервью":[
+    {de:"Erzählen Sie kurz über sich.", ru:"Расскажите коротко о себе.", az:"Özünüz haqqında qısaca danışın."},
+    {de:"Warum möchten Sie bei uns arbeiten?", ru:"Почему хотите работать у нас?", az:"Niyə bizdə işləmək istəyirsiniz?"}
+  ],
+  "Аптека":[
+    {de:"Haben Sie etwas gegen Kopfschmerzen?", ru:"У вас есть что‑нибудь от головной боли?", az:"Baş ağrısına qarşı dərmanınız var?"},
+    {de:"Nehmen Sie die Tabletten dreimal täglich.", ru:"Принимайте таблетки трижды в день.", az:"Gün ərzində üç dəfə qəbul edin."}
+  ],
+  "Поликлиника":[
+    {de:"Ich habe heute einen Termin.", ru:"У меня сегодня запись.", az:"Bu gün vaxtım var (qəbuldayam)."},
+    {de:"Warten Sie bitte im Wartezimmer.", ru:"Подождите, пожалуйста, в ожидании.", az:"Xahiş edirik, gözləmə otağında gözləyin."}
+  ]
+};
+
+// Тест — 35 вопросов (частично как раньше)
+const quiz = [
+  {q:"Как сказать «Привет»?",o:["Hallo","Danke","Bitte","Tschüss"],c:0},
+  {q:"«Danke» значит…",o:["Пожалуйста","Спасибо","Пока","Доброе утро"],c:1},
+  {q:"«Guten Abend» — это…",o:["Добрый вечер","Доброй ночи","Добрый день","Доброе утро"],c:0},
+  {q:"Число 5",o:["vier","sechs","fünf","acht"],c:2},
+  {q:"Цвет «красный»",o:["blau","rot","grün","gelb"],c:1},
+  {q:"Вежливо «Как дела?»",o:["Wie geht es Ihnen?","Wie alt sind Sie?","Wo wohnen Sie?","Was ist das?"],c:0},
+  {q:"«die Mutter» —",o:["сын","мать","сестра","отец"],c:1},
+  {q:"«das Wasser» —",o:["вода","молоко","кофе","хлеб"],c:0},
+  {q:"Перевод «weiß»",o:["чёрный","зелёный","белый","жёлтый"],c:2},
+  {q:"«heute» —",o:["завтра","вчера","сегодня","сейчас"],c:2},
+  {q:"«die Wohnung» —",o:["квартира","кухня","ванная","дом"],c:0},
+  {q:"«Gute Nacht» —",o:["Спокойной ночи","Добрый вечер","Добрый день","Доброе утро"],c:0},
+  {q:"Как спросить цену?",o:["Wie viel kostet das?","Wie spät ist es?","Wie lange?","Wie viele?"],c:0},
+  {q:"«Я хочу кофе»",o:["Ich habe Kaffee","Ich möchte Kaffee","Ich bin Kaffee","Ich mache Kaffee"],c:1},
+  {q:"Артикль среднего рода",o:["der","die","das","den"],c:2},
+  {q:"V2-позиция означает…",o:["Глагол на 2-м месте","Глагол в конце","Глагол пропадает","Нет значения"],c:0},
+  {q:"«я есть/являюсь»",o:["ich habe","ich bin","ich seid","ich bist"],c:1},
+  {q:"«у нас есть»",o:["wir sind","wir habt","wir haben","wir hat"],c:2},
+  {q:"«метро»",o:["die U-Bahn","die Straße","der Bahnhof","der Flughafen"],c:0},
+  {q:"«аптека»",o:["die Apotheke","der Arzt","die Rechnung","der Markt"],c:0},
+  {q:"«примерочная»",o:["die Größe","die Kasse","die Umkleidekabine","der Preis"],c:2},
+  {q:"«сегодня холодно»",o:["Heute ist es kalt","Heute kalt ist","Es kalt heute","Heute ist kalt"],c:0},
+  {q:"Правильная пара: sein?",o:["du sind","wir seid","ihr sind","ihr seid"],c:3},
+  {q:"Модальные: «Я могу говорить по-немецки»",o:["Ich kann Deutsch sprechen","Ich spreche kann Deutsch","Ich kann sprechen Deutsch","Ich Deutsch kann sprechen"],c:0},
+  {q:"«наличными»",o:["mit Karte","bar","teuer","billig"],c:1},
+  {q:"«вокзал»",o:["der Bahnhof","der Park","das Zentrum","die Schule"],c:0},
+  {q:"«улица»",o:["die Straße","die Stadt","der Weg","der Platz"],c:0},
+  {q:"«где …?»",o:["Wer ist …?","Wo ist …?","Was ist …?","Wie ist …?"],c:1},
+  {q:"«Хорошо, спасибо»",o:["Gut, danke","Danke gut","Guten Dank","Gut und danke"],c:0},
+  {q:"«Счёт, пожалуйста»",o:["Die Größe, bitte","Die Rechnung, bitte","Der Preis, bitte","Das Ticket, bitte"],c:1},
+  {q:"Как сказать «Извините»",o:["Entschuldigung","Bitte","Danke","Hallo"],c:0},
+  {q:"«два»",o:["zwei","drei","vier","zehn"],c:0},
+  {q:"«магазин одежды» (контекст)",o:["Jacke","Größe","Umkleidekabine","Preis"],c:2},
+  {q:"«вода»",o:["Milch","Wasser","Tee","Kaffee"],c:1},
+  {q:"«мой дом» (род)",o:["die Haus","der Haus","das Haus","den Haus"],c:2},
+  {q:"Вопрос без вопросительного слова начинается с…",o:["существительного","глагола","местоимения","частицы"],c:1}
+];
+
+// =================== APP STATE ===================
+let favorites = new Set(JSON.parse(localStorage.getItem('favorites')||'[]'));
+let currentCardIndex = parseInt(localStorage.getItem('cardIndex')||'0',10);
+let isFlipped = false;
+let cardPool = []; // текущий список слов для карточек
+
+function trans(item){ return item[transLang] || item.ru || ""; }
+function speak(text){
+  try{
+    if(!('speechSynthesis' in window)) { alert('Браузер не поддерживает озвучку.'); return; }
+    const u = new SpeechSynthesisUtterance(text); u.lang='de-DE'; u.rate=0.95; speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }catch(e){ console.warn(e); }
+}
+
+// ---- Навигация ----
+function switchTab(name){
+  document.querySelectorAll('.tab-content').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('#tabs a').forEach(a=>a.classList.remove('active'));
+  document.getElementById(name)?.classList.add('active');
+  document.querySelector(`#tabs a[data-tab="${name}"]`)?.classList.add('active');
+  localStorage.setItem('currentTab', name);
+}
+function initTabs(){
+  document.querySelectorAll('#tabs a').forEach(a=>{
+    a.addEventListener('click',(e)=>{ e.preventDefault(); const name=a.dataset.tab; location.hash=name; switchTab(name); });
+  });
+  window.addEventListener('hashchange',()=>{ const h=location.hash.replace('#',''); if(document.getElementById(h)) switchTab(h); });
+  const start=(location.hash || '#' + (localStorage.getItem('currentTab')||'lessons')).replace('#','');
+  switchTab(start);
+}
+
+// ---- Уроки ----
+function loadLessonFilter(){
+  const sel=document.getElementById('lesson-filter');
+  sel.innerHTML = '<option value="all">—</option>' + [...new Set(lessons.map(x=>x.topic))].map(t=>`<option>${t}</option>`).join('');
+  sel.onchange = renderLessons;
+}
+function renderLessons(){
+  const filter = document.getElementById('lesson-filter').value;
+  const box = document.getElementById('lessons-list'); box.innerHTML='';
+  const data = (filter==='all') ? lessons : lessons.filter(x=>x.topic===filter);
+  document.getElementById('lesson-count').textContent = data.length + ' ' + (uiLang==='az'?'dərs':uiLang==='de'?'Lektion(en)':'урок(ов)');
+  data.forEach(lesson=>{
+    const el=document.createElement('div'); el.className='card';
+    el.innerHTML = `
+      <h3>${lesson.title} <span class="badge">${lesson.topic}</span></h3>
+      <div style="margin:6px 0 8px;color:#93c5fd;font-weight:700">Фразы</div>
+      ${lesson.phrases.map(p=>`
+        <div class="row" style="justify-content:space-between;border:1px solid var(--border);border-radius:12px;padding:8px;margin:6px 0;background:#0b1222">
+          <div><strong>${p.de}</strong><div class="muted">${p[transLang]||p.ru}</div></div>
+          <button class="ghost say">🔊</button>
+        </div>
+      `).join('')}
+      <div style="margin:10px 0 6px;color:#93c5fd;font-weight:700">Мини-диалог</div>
+      <div class="row" style="flex-direction:column;align-items:stretch">
+        ${lesson.dialog.map(d=>`<div class="dlg-bubble dlg-de"><div><strong>${d.de}</strong><div class="dlg-ru">${d[transLang]||d.ru}</div></div></div>`).join('')}
+      </div>`;
+    box.appendChild(el);
+    el.querySelectorAll('.say').forEach((b,i)=>b.addEventListener('click',()=>speak(lesson.phrases[i].de)));
+  });
+}
+
+// ---- Словарь ----
+function fillTopicSelect(){
+  const topicSel=document.getElementById('topic');
+  topicSel.innerHTML = '<option value="all">—</option>' + TOPICS.map(t=>`<option>${t}</option>`).join('');
+  const cardsSel=document.getElementById('cards-topic');
+  cardsSel.innerHTML = '<option value="all">—</option>' + TOPICS.map(t=>`<option>${t}</option>`).join('');
+  cardsSel.onchange = refreshCardPool;
+}
+function renderDict(){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  const topic=document.getElementById('topic').value;
+  const onlyFav = document.getElementById('onlyFav').dataset.on === '1';
+  const box=document.getElementById('dict'); box.innerHTML='';
+  vocabulary
+    .filter(w => (topic==='all'||w.t===topic))
+    .filter(w => !q || w.de.toLowerCase().includes(q) || w.ru.toLowerCase().includes(q) || (w.az||'').toLowerCase().includes(q))
+    .filter(w => !onlyFav || favorites.has(w.de))
+    .forEach(w=>{
+      const div=document.createElement('div'); div.className='item card';
+      const fav = favorites.has(w.de) ? 'style="color:#fbbf24;border-color:#fbbf24"' : '';
+      div.innerHTML = `
+        <div>
+          <strong>${w.de}</strong>
+          <div class="muted">— ${trans(w)} ${w.ipa?`<span class="muted">/${w.ipa}/</span>`:''}</div>
+          <div class="badge">${w.t}</div>
+        </div>
+        <div class="row">
+          <button class="ghost say">🔊</button>
+          <button class="ghost fav" ${fav}>★</button>
+        </div>`;
+      div.querySelector('.say').addEventListener('click',()=>speak(w.de));
+      const favBtn = div.querySelector('.fav');
+      favBtn.addEventListener('click',()=>{
+        if(favorites.has(w.de)){ favorites.delete(w.de); favBtn.removeAttribute('style'); }
+        else { favorites.add(w.de); favBtn.style.color='#fbbf24'; favBtn.style.borderColor='#fbbf24'; }
+        localStorage.setItem('favorites', JSON.stringify([...favorites]));
+      });
+      box.appendChild(div);
+    });
+}
+// Экспорт/импорт
+function exportProgress(){
+  const data = { favorites:[...favorites], cardIndex: currentCardIndex, uiLang, transLang };
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'deutsch_progress.json';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function importProgress(file){
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      favorites = new Set(data.favorites||[]);
+      currentCardIndex = parseInt(data.cardIndex||0,10);
+      uiLang = data.uiLang || uiLang;
+      transLang = data.transLang || transLang;
+      localStorage.setItem('favorites', JSON.stringify([...favorites]));
+      localStorage.setItem('cardIndex', String(currentCardIndex));
+      localStorage.setItem('uiLang', uiLang);
+      localStorage.setItem('transLang', transLang);
+      document.getElementById('ui-lang').value = uiLang;
+      document.getElementById('trans-lang').value = transLang;
+      applyUI(); renderDict(); refreshCardPool(); showCard();
+      alert('Импорт завершён ✅');
+    }catch(e){ alert('Файл повреждён'); }
+  };
+  reader.readAsText(file);
+}
+
+// ---- Тест ----
+let qi=0, score=0;
+function initQuiz(){ qi=0; score=0; drawQ(); }
+function drawQ(){
+  const qn=document.getElementById('question');
+  const opts=document.getElementById('options');
+  const bar=document.getElementById('bar');
+  const ptxt=document.getElementById('progText');
+  const fin=document.getElementById('final');
+  fin.style.display='none'; document.getElementById('again').onclick=initQuiz;
+  if(qi>=quiz.length){
+    qn.textContent=''; opts.innerHTML='';
+    fin.style.display='block';
+    const L=UI[uiLang]; document.getElementById('scoreText').textContent=(uiLang==='de'?'Ergebnis: ':'Результат: ') + `${score} / ${quiz.length}`;
+    bar.style.width='100%'; ptxt.textContent=`${quiz.length} / ${quiz.length}`;
+    return;
+  }
+  const item=quiz[qi];
+  qn.textContent=item.q; opts.innerHTML='';
+  item.o.forEach((text,i)=>{
+    const el=document.createElement('div'); el.className='opt'; el.tabIndex=0; el.textContent=text;
+    el.addEventListener('click',()=>pick(i));
+    el.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' ') pick(i); });
+    opts.appendChild(el);
+  });
+  const progress=Math.round(100*qi/quiz.length);
+  bar.style.width=progress+'%'; ptxt.textContent=`${qi} / ${quiz.length}`;
+  function pick(i){
+    document.querySelectorAll('.opt').forEach((el,idx)=>{
+      el.classList.add('dis');
+      if(idx===item.c) el.classList.add('correct');
+      if(idx===i && idx!==item.c) el.classList.add('wrong');
+    });
+    if(i===item.c) score++;
+    setTimeout(()=>{ qi++; drawQ(); }, 700);
+  }
+}
+
+// ---- Грамматика ----
+function loadGrammar(){
+  const box=document.getElementById('grammar-list'); box.innerHTML='';
+  grammar.forEach(section=>{
+    const el=document.createElement('div'); el.className='card';
+    el.innerHTML = `
+      <h3>${section.title}</h3>
+      <ul>${section.points.map(p=>`<li class="muted" style="margin:6px 0">${p}</li>`).join('')}</ul>
+      ${section.examples? `<div style="margin-top:10px;color:#93c5fd;font-weight:700">Примеры</div>
+      ${section.examples.map(ex=>`<div class="row" style="justify-content:space-between;border:1px solid var(--border);border-radius:12px;padding:8px;margin:6px 0;background:#0b1222">
+        <div><strong>${ex.de}</strong><div class="muted">${ex[transLang]||ex.ru}</div></div>
+        <button class="ghost say">🔊</button>
+      </div>`).join('')}`:''}
+    `;
+    box.appendChild(el);
+    el.querySelectorAll('.say').forEach((b,i)=>{
+      const ex = section.examples && section.examples[i]; if(ex) b.addEventListener('click',()=>speak(ex.de));
+    });
+  });
+}
+
+// ---- Карточки (fixed) ----
+function refreshCardPool(){
+  const topic = document.getElementById('cards-topic').value;
+  const onlyFav = document.getElementById('cards-only-fav').dataset.on === '1';
+  cardPool = vocabulary.filter(w => (topic==='all'||w.t===topic)).filter(w => !onlyFav || favorites.has(w.de));
+  if(cardPool.length===0){ cardPool = vocabulary.slice(); }
+  if(currentCardIndex>=cardPool.length) currentCardIndex=0;
+  showCard();
+}
+function showCard(){
+  const item = cardPool[currentCardIndex] || vocabulary[0];
+  // front: DE, back: translation (RU/AZ)
+  document.getElementById('frontText').textContent=item.de;
+  document.getElementById('backText').textContent=`${trans(item)}${item.ipa? ' /'+item.ipa+'/' : ''}`;
+  document.getElementById('counter').textContent=`${(cardPool.length?currentCardIndex:0)+1} / ${cardPool.length||1}`;
+}
+function initCards(){
+  refreshCardPool();
+  document.getElementById('flipBtn').onclick=()=>{ isFlipped=!isFlipped; document.getElementById('flip').classList.toggle('flipped', isFlipped); };
+  document.getElementById('flip').onclick=()=>{ isFlipped=!isFlipped; document.getElementById('flip').classList.toggle('flipped', isFlipped); };
+  document.getElementById('next').onclick=()=>{ isFlipped=false; document.getElementById('flip').classList.remove('flipped'); currentCardIndex=(currentCardIndex+1)%cardPool.length; localStorage.setItem('cardIndex', String(currentCardIndex)); showCard(); };
+  document.getElementById('prev').onclick=()=>{ isFlipped=false; document.getElementById('flip').classList.remove('flipped'); currentCardIndex=(currentCardIndex-1+cardPool.length)%cardPool.length; localStorage.setItem('cardIndex', String(currentCardIndex)); showCard(); };
+  document.getElementById('say').onclick=()=>{ const item = cardPool[currentCardIndex]; speak(item.de); };
+}
+
+// ---- Диалоги ----
+function loadDialogs(){
+  const sel=document.getElementById('dlg-topic');
+  sel.innerHTML = Object.keys(dialogs).map(t=>`<option>${t}</option>`).join('');
+  const render=()=>{
+    const box=document.getElementById('dlg-box'); box.innerHTML='';
+    const t = sel.value;
+    dialogs[t].forEach(rep=>{
+      const b=document.createElement('div'); b.className='dlg-bubble dlg-de';
+      b.innerHTML=`<div><strong>${rep.de}</strong><div class="dlg-ru">${rep[transLang]||rep.ru}</div></div>`;
+      box.appendChild(b);
+    });
+  };
+  sel.onchange=render; render();
+  document.getElementById('playdlg').onclick=()=>{
+    const t=sel.value; let seq=''; dialogs[t].forEach(r=>{ seq += r.de + '. '; }); speak(seq);
+  };
+}
+
+// ---- Инициализация ----
+document.addEventListener('DOMContentLoaded', ()=>{
+  if(!location.hash){ location.hash = '#lessons'; }
+  document.getElementById('ui-lang').value = uiLang;
+  document.getElementById('trans-lang').value = transLang;
+  document.getElementById('ui-lang').addEventListener('change',(e)=>{ uiLang = e.target.value; localStorage.setItem('uiLang', uiLang); applyUI(); renderLessons(); renderDict(); loadGrammar(); });
+  document.getElementById('trans-lang').addEventListener('change',(e)=>{ transLang = e.target.value; localStorage.setItem('transLang', transLang); renderLessons(); renderDict(); loadGrammar(); refreshCardPool(); showCard(); });
+  applyUI();
+
+  initTabs();
+  loadLessonFilter(); renderLessons();
+
+  fillTopicSelect(); renderDict();
+  document.getElementById('q').addEventListener('input', renderDict);
+  document.getElementById('topic').addEventListener('change', renderDict);
+  document.getElementById('onlyFav').addEventListener('click', (e)=>{ const on = e.target.dataset.on==='1' ? '0' : '1'; e.target.dataset.on=on; applyUI(); renderDict(); refreshCardPool(); });
+  document.getElementById('exportBtn').addEventListener('click', exportProgress);
+  document.getElementById('importFile').addEventListener('change', (e)=>{ if(e.target.files[0]) importProgress(e.target.files[0]); });
+
+  document.getElementById('again').addEventListener('click', initQuiz); initQuiz();
+
+  loadGrammar();
+
+  document.getElementById('cards-only-fav').addEventListener('click', (e)=>{ const on = e.target.dataset.on==='1' ? '0' : '1'; e.target.dataset.on=on; applyUI(); refreshCardPool(); });
+  initCards();
+
+  loadDialogs();
+});
+</script>
+</body>
+</html>
