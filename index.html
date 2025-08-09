@@ -24,6 +24,7 @@ body{
 .header{
   position:sticky;top:0;z-index:50;backdrop-filter: blur(6px);
   background:linear-gradient(180deg,#08111fdd,#08111f88 70%,transparent);
+  border-bottom: 1px solid #1e293b;
 }
 .brand{
   display:flex;align-items:center;gap:12px;padding:14px 6px 8px
@@ -37,20 +38,39 @@ body{
 .lang-switch, .nav{
   display:flex;gap:8px;flex-wrap:wrap;align-items:center
 }
-.lang-switch button, .nav button, .chip, .btn{
+.btn, .chip {
   border:1px solid #1f2a44;background:#0e162d;color:var(--text);
   padding:8px 12px;border-radius:999px;cursor:pointer;
-  transition:.2s box-shadow,.2s background,.2s transform;font-weight:600
+  transition:.2s box-shadow,.2s background,.2s transform;font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;
 }
-.lang-switch button.active, .nav button.active{background:var(--primary);border-color:var(--primary);color:white;box-shadow:0 6px 20px #0ea5e944}
+.btn:focus, .chip:focus {
+  outline: 2px solid var(--primary); 
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--primary);
+}
+.btn.active, .nav button.active{background:var(--primary);border-color:var(--primary);color:white;box-shadow:0 6px 20px #0ea5e944}
 .lang-switch{margin-left:auto}
 .header-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.nav{padding:8px 0}
+.nav{
+  padding:8px 0;
+  border-bottom: 1px solid #1e293b;
+  margin: 0 -16px;
+}
+.nav button {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  font-weight: 600;
+}
 .search{display:flex;gap:10px;align-items:center;margin:10px 0 0}
 .search input{
-  width:min(520px,100%); padding:12px 14px;border-radius:14px;border:1px solid #1f2a44;background:#0e162d;color:var(--text)
+  width:min(520px,100%); padding:12px 14px;border-radius:14px;border:1px solid #1f2a44;background:#0e162d;color:var(--text);
+  transition: border-color .2s;
 }
-.btn{background:#122041;border-color:#1f2a44}
+.search input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
 .btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
 .btn.ghost{background:transparent}
 .grid{
@@ -64,7 +84,12 @@ body{
 .badge{display:inline-flex;gap:8px;align-items:center;background:#0a162e;border:1px solid #1f2a44;color:#9ecff8;padding:6px 10px;border-radius:12px;font-size:.88rem}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .lesson, .dict-item, .dialog-item{
-  border:1px solid #1f2a44;border-radius:16px;padding:12px 14px;background:#0d1730
+  border:1px solid #1f2a44;border-radius:16px;padding:12px 14px;background:#0d1730;
+  transition: transform .15s, border-color .15s;
+}
+.lesson:hover, .dict-item:hover, .dialog-item:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
 }
 .lesson{display:flex;gap:12px;align-items:flex-start}
 .lesson .title{font-weight:700}
@@ -72,20 +97,57 @@ body{
 .dict-head{display:flex;gap:8px;align-items:center;justify-content:space-between}
 .dict-body{display:grid;grid-template-columns:repeat(1, minmax(0,1fr)); gap:10px;margin-top:10px}
 .tag{padding:4px 8px;border:1px solid #1f2a44;background:#0b1a31;border-radius:999px;color:#a5b4fc;font-size:.8rem}
-.favorite{cursor:pointer}
+.favorite{cursor:pointer; transition: color .2s; }
+.favorite:hover { color: var(--warn); }
 hr.sep{border:0;border-top:1px dashed #203050;margin:14px 0}
 .flashcard{
   height:190px;border-radius:18px;background:linear-gradient(160deg,#0e3c60,#0b2744 60%);
   color:#e8f5ff;display:grid;place-items:center;font-size:1.2rem;font-weight:700;
-  border:1px solid #1e3a5f;box-shadow:var(--shadow); user-select:none; text-align:center;padding:16px
+  border:1px solid #1e3a5f;box-shadow:var(--shadow); user-select:none; text-align:center;padding:16px;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+.flashcard:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 30px rgba(0,0,0,.3);
 }
 .controls{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px;flex-wrap:wrap}
 select, .select{
-  padding:10px 12px;border-radius:12px;border:1px solid #1f2a44;background:#0e162d;color:var(--text)
+  padding:10px 12px;border-radius:12px;border:1px solid #1f2a44;background:#0e162d;color:var(--text);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
 }
 .small{font-size:.86rem;color:var(--muted)}
 .right{margin-left:auto}
 footer{opacity:.8;margin:40px 0 30px;text-align:center;font-size:.9rem;color:#9fb6d1}
+footer a { color: var(--primary); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* Улучшенные табы */
+[role="tablist"] {
+  position: relative;
+}
+[role="tablist"]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #1e293b;
+}
+.tab-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: transform .3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  will-change: transform;
+}
+
 @media (min-width:700px){
   .card.span-6{grid-column:span 6}
   .card.span-4{grid-column:span 4}
@@ -97,32 +159,33 @@ footer{opacity:.8;margin:40px 0 30px;text-align:center;font-size:.9rem;color:#9f
 </style>
 </head>
 <body>
-<header class="header">
+<header class="header" aria-label="Основная навигация">
   <div class="container">
     <div class="header-row">
       <div class="brand">
-        <div class="logo">DE</div>
+        <div class="logo" aria-hidden="true">DE</div>
         <h1 id="appTitle">Deutsch Lernen</h1>
         <span class="badge" id="badgeTag">Три языка</span>
       </div>
-      <div class="lang-switch" role="tablist" aria-label="Language switch">
-        <button data-lang="ru" class="active">RU</button>
-        <button data-lang="de">DE</button>
-        <button data-lang="az">AZ</button>
+      <div class="lang-switch" role="tablist" aria-label="Языки интерфейса">
+        <button data-lang="ru" class="active" role="tab" aria-selected="true" aria-controls="tab-ru">RU</button>
+        <button data-lang="de" role="tab" aria-selected="false" aria-controls="tab-de">DE</button>
+        <button data-lang="az" role="tab" aria-selected="false" aria-controls="tab-az">AZ</button>
       </div>
     </div>
 
     <div class="row">
-      <nav class="nav" id="navTabs">
-        <button data-tab="lessons" class="active">Уроки</button>
-        <button data-tab="dictionary">Словарь</button>
-        <button data-tab="flashcards">Карточки</button>
-        <button data-tab="grammar">Грамматика</button>
-        <button data-tab="dialogs">Диалоги</button>
+      <nav class="nav" id="navTabs" role="tablist" aria-label="Разделы приложения">
+        <button data-tab="lessons" class="active" role="tab" aria-selected="true" aria-controls="view-lessons">Уроки</button>
+        <button data-tab="dictionary" role="tab" aria-selected="false" aria-controls="view-dictionary">Словарь</button>
+        <button data-tab="flashcards" role="tab" aria-selected="false" aria-controls="view-flashcards">Карточки</button>
+        <button data-tab="grammar" role="tab" aria-selected="false" aria-controls="view-grammar">Грамматика</button>
+        <button data-tab="dialogs" role="tab" aria-selected="false" aria-controls="view-dialogs">Диалоги</button>
+        <span class="tab-indicator" id="tabIndicator"></span>
       </nav>
       <div class="search right">
-        <input id="searchInput" type="search" placeholder="Поиск по словарю…" />
-        <button class="btn" id="speakBtn" title="Озвучить подсказку">🔊</button>
+        <input id="searchInput" type="search" placeholder="Поиск по словарю…" aria-label="Поиск в словаре" />
+        <button class="btn" id="speakBtn" title="Озвучить подсказку" aria-label="Озвучить пример использования">🔊</button>
       </div>
     </div>
   </div>
@@ -130,13 +193,13 @@ footer{opacity:.8;margin:40px 0 30px;text-align:center;font-size:.9rem;color:#9f
 
 <main class="container" id="views">
   <!-- LESSONS -->
-  <section id="view-lessons" class="grid">
+  <section id="view-lessons" class="grid" role="tabpanel" aria-labelledby="tab-lessons">
     <div class="card span-6">
       <div class="row" style="justify-content:space-between;align-items:center">
         <h3 data-i="l_greetings">Приветствия и знакомство</h3>
         <span class="kicker" id="lessCount">5 урок(ов)</span>
       </div>
-      <div id="lessonsList" class="col"></div>
+      <div id="lessonsList" class="lessons-container"></div>
     </div>
 
     <div class="card span-6">
@@ -160,13 +223,14 @@ footer{opacity:.8;margin:40px 0 30px;text-align:center;font-size:.9rem;color:#9f
   </section>
 
   <!-- DICTIONARY -->
-  <section id="view-dictionary" class="grid" hidden>
+  <section id="view-dictionary" class="grid" hidden role="tabpanel" aria-labelledby="tab-dictionary">
     <div class="card">
       <div class="dict-head">
         <h3 data-i="d_title">Словарь</h3>
         <div class="row">
-          <select id="dictTopic"></select>
-          <button class="btn" id="exportCSV">CSV</button>
+          <label for="dictTopic" class="small" aria-hidden="true">Тема:</label>
+          <select id="dictTopic" aria-label="Выберите тему словаря"></select>
+          <button class="btn" id="exportCSV" aria-label="Экспорт в CSV">CSV</button>
         </div>
       </div>
       <div class="dict-body" id="dictBody"></div>
@@ -174,28 +238,28 @@ footer{opacity:.8;margin:40px 0 30px;text-align:center;font-size:.9rem;color:#9f
   </section>
 
   <!-- FLASHCARDS -->
-  <section id="view-flashcards" class="grid" hidden>
+  <section id="view-flashcards" class="grid" hidden role="tabpanel" aria-labelledby="tab-flashcards">
     <div class="card span-6">
       <div class="row" style="justify-content:space-between">
         <h3 data-i="f_title">Карточки</h3>
         <div class="row">
-          <label class="small" for="fcTopic" data-i="topic">Тема</label>
-          <select id="fcTopic" class="select"></select>
+          <label class="small" for="fcTopic" data-i="topic" aria-hidden="true">Тема</label>
+          <select id="fcTopic" aria-label="Выберите тему карточек"></select>
         </div>
       </div>
-      <div class="flashcard" id="flashcard" tabindex="0" aria-live="polite">—</div>
+      <div class="flashcard" id="flashcard" tabindex="0" aria-live="polite" aria-label="Карточка для изучения">—</div>
       <div class="controls">
-        <button class="btn" id="prevCard">◀</button>
-        <span id="fcPos" class="small">0/0</span>
-        <button class="btn" id="nextCard">▶</button>
-        <button class="btn" id="flipCard" data-i="flip">Перевернуть</button>
-        <button class="btn" id="ttsCard">🔊</button>
-        <button class="btn" id="favCard">★</button>
-        <button class="btn" id="shuffleCard">🔀</button>
+        <button class="btn" id="prevCard" aria-label="Предыдущая карточка">◀</button>
+        <span id="fcPos" class="small" aria-live="polite">0/0</span>
+        <button class="btn" id="nextCard" aria-label="Следующая карточка">▶</button>
+        <button class="btn" id="flipCard" data-i="flip" aria-label="Перевернуть карточку">Перевернуть</button>
+        <button class="btn" id="ttsCard" aria-label="Озвучить текущую карточку">🔊</button>
+        <button class="btn" id="favCard" aria-label="Добавить в избранное">★</button>
+        <button class="btn" id="shuffleCard" aria-label="Перемешать карточки">🔀</button>
       </div>
       <div class="row" style="margin-top:8px">
-        <label class="small">Показывать:</label>
-        <select id="fcSide" class="select">
+        <label class="small" for="fcSide">Показывать:</label>
+        <select id="fcSide" aria-label="Направление перевода">
           <option value="front">DE → (RU/AZ)</option>
           <option value="back">(RU/AZ) → DE</option>
           <option value="mix">Смешать</option>
@@ -210,26 +274,28 @@ footer{opacity:.8;margin:40px 0 30px;text-align:center;font-size:.9rem;color:#9f
   </section>
 
   <!-- GRAMMAR -->
-  <section id="view-grammar" class="grid" hidden>
+  <section id="view-grammar" class="grid" hidden role="tabpanel" aria-labelledby="tab-grammar">
     <div class="card">
       <div class="row" style="justify-content:space-between;align-items:center">
         <h3 data-i="g_title">Грамматика</h3>
-        <div>
-          <select id="gramTopic"></select>
+        <div class="row">
+          <label for="gramTopic" class="small" aria-hidden="true">Тема:</label>
+          <select id="gramTopic" aria-label="Выберите грамматическую тему"></select>
         </div>
       </div>
-      <article id="grammarBody"></article>
+      <article id="grammarBody" class="grammar-content"></article>
     </div>
   </section>
 
   <!-- DIALOGS -->
-  <section id="view-dialogs" class="grid" hidden>
+  <section id="view-dialogs" class="grid" hidden role="tabpanel" aria-labelledby="tab-dialogs">
     <div class="card">
       <div class="row" style="justify-content:space-between;align-items:center">
         <h3 data-i="dlg_title">Диалоги</h3>
         <div class="row">
-          <select id="dlgTopic"></select>
-          <button class="btn" id="playDlg">▶</button>
+          <label for="dlgTopic" class="small" aria-hidden="true">Тема:</label>
+          <select id="dlgTopic" aria-label="Выберите тему диалога"></select>
+          <button class="btn" id="playDlg" aria-label="Воспроизвести диалог">▶</button>
         </div>
       </div>
       <div id="dialogsList" class="dict-body"></div>
@@ -240,6 +306,9 @@ footer{opacity:.8;margin:40px 0 30px;text-align:center;font-size:.9rem;color:#9f
 <footer>
   © <span id="year"></span> Deutsch Lernen • <span id="footLang">Русский</span> / Deutsch / Azərbaycan. 
   <span class="small">Оффлайн-работа: сохранение прогресса и избранного в браузере.</span>
+  <div class="small" style="margin-top: 8px;">
+    <a href="#" id="accessibilityToggle" aria-label="Настройки доступности">Настройки доступности</a>
+  </div>
 </footer>
 
 <script>
@@ -253,7 +322,11 @@ const UI = {
     g_title:"Грамматика", dlg_title:"Диалоги",
     placeholders:{search:"Поиск по словарю…"},
     voiceHint:"Скажи: «Озвучь текущую карточку»",
-    foot:"Русский"
+    foot:"Русский",
+    resetConfirm: "Вы уверены, что хотите сбросить весь прогресс обучения?",
+    noData: "Нет данных для отображения",
+    exportSuccess: "Экспорт выполнен успешно",
+    exportError: "Не удалось экспортировать данные"
   },
   de:{
     title:"Deutsch Lernen", tag:"Dreisprachig",
@@ -263,7 +336,11 @@ const UI = {
     g_title:"Grammatik", dlg_title:"Dialoge",
     placeholders:{search:"Im Wörterbuch suchen…"},
     voiceHint:"Sag: „Lies die aktuelle Karte vor“",
-    foot:"Deutsch"
+    foot:"Deutsch",
+    resetConfirm: "Möchten Sie wirklich Ihren gesamten Lernfortschritt zurücksetzen?",
+    noData: "Keine Daten zum Anzeigen",
+    exportSuccess: "Export erfolgreich abgeschlossen",
+    exportError: "Daten konnten nicht exportiert werden"
   },
   az:{
     title:"Deutsch Lernen", tag:"Üç dilli",
@@ -273,14 +350,29 @@ const UI = {
     g_title:"Qrammatika", dlg_title:"Dialoqlar",
     placeholders:{search:"Lüğətdə axtarış…"},
     voiceHint:"De: “Kartı səsləndir”",
-    foot:"Azərbaycan"
+    foot:"Azərbaycan",
+    resetConfirm: "Öyrənmə tərəqqinizi sıfırlamaq istədiyinizə əminsiniz?",
+    noData: "Göstərilmək üçün məlumat yoxdur",
+    exportSuccess: "Eksport uğurla başa çatdı",
+    exportError: "Məlumatları eksport etmək mümkün olmadı"
   }
 };
 let lang = localStorage.getItem("ui-lang") || "ru";
-const $ = s=>document.querySelector(s);
-const $$ = s=>document.querySelectorAll(s);
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
 
-/* ========= ДАННЫЕ (пример, можно расширять) ========= */
+/* ========= Экранирование HTML для безопасности ========= */
+function escapeHTML(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '<')
+    .replace(/>/g, '>')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/* ========= ДАННЫЕ ========= */
 const topics = {
   greetings:{
     name:{ru:"Приветствия", de:"Begrüßung", az:"Salamlaşma"},
@@ -305,7 +397,7 @@ const topics = {
     grammar:[
       {title:{ru:"Предикатив sein: ich bin …", de:"Prädikativ mit sein", az:"‘Sein’ felinin istifadəsi"},
        html:{
-        ru:`<p><b>sein</b> — неправильный глагол ‘быть’. Формы: <code>ich bin, du bist, er/sie/es ist, wir sind, ihr seid, sie/Sie sind</code>.</p>
+        ru:`<p><b>sein</b> — неправильный глагол 'быть'. Формы: <code>ich bin, du bist, er/sie/es ist, wir sind, ihr seid, sie/Sie sind</code>.</p>
             <ul><li>Ich <b>bin</b> Samir.</li><li>Du <b>bist</b> Aylin.</li></ul>`,
         de:`<p><b>sein</b> (ich bin, du bist, er/sie/es ist …). Beispiele: Ich <b>bin</b> Samir. Du <b>bist</b> Aylin.</p>`,
         az:`<p><b>sein</b> feilinin formaları: <code>ich bin, du bist, er/sie/es ist …</code>. Misal: Mən <b>Samirəm</b>.</p>`
@@ -315,7 +407,7 @@ const topics = {
       {title:{ru:"Здравствуйте! Как вас зовут?",de:"Hallo! Wie heißen Sie?",az:"Salam! Adınız nədir?"},
        points:[
         {de:"Ich heiße Samir.", ru:"Меня зовут Самир.", az:"Mənim adım Samirdir."},
-        {de:"Wie geht’s?", ru:"Как дела?", az:"Necəsən?"},
+        {de:"Wie geht's?", ru:"Как дела?", az:"Necəsən?"},
         {de:"Freut mich!", ru:"Приятно познакомиться!", az:"Tanış olduğuma şadam!"}
        ]},
       {title:{ru:"Как дела?",de:"Wie geht's?",az:"Necəsən?"},
@@ -363,336 +455,766 @@ const topicKeys = Object.keys(topics);
 
 /* ========= СОСТОЯНИЕ ========= */
 const state = {
-  tab:"lessons",
+  tab: "lessons",
   ui: UI[lang],
-  flash:{
+  flash: {
     topic: topicKeys[0],
-    idx:0, side:"front", order:[],
-    favorites: JSON.parse(localStorage.getItem("fav-cards")||"[]")
+    idx: 0, 
+    side: "front", 
+    order: [],
+    favorites: JSON.parse(localStorage.getItem("fav-cards") || "[]")
   },
-  progress: JSON.parse(localStorage.getItem("progress")||"{}")
+  progress: JSON.parse(localStorage.getItem("progress") || "{}")
 };
 
 /* ========= ПРИМЕНЕНИЕ ЯЗЫКА UI ========= */
-function applyUI(){
+function applyUI() {
   document.documentElement.lang = lang;
   state.ui = UI[lang];
+  
+  // Обновляем только текстовые узлы без перестроения DOM
   $("#appTitle").textContent = state.ui.title;
   $("#badgeTag").textContent = state.ui.tag;
-  $$("#navTabs button").forEach(b=>{
-    const k=b.dataset.tab;
-    b.textContent = state.ui.tabs[k];
-    b.classList.toggle("active", state.tab===k);
-  });
-  $("[data-i='l_greetings']").textContent = state.ui.l_greetings;
-  $("[data-i='l_basics']").textContent = state.ui.l_basics;
-  $("[data-i='d_title']").textContent = state.ui.d_title;
-  $("[data-i='f_title']").textContent = state.ui.f_title;
-  $("[data-i='topic']").textContent  = state.ui.topic;
-  $("[data-i='flip']").textContent   = state.ui.flip;
-  $("[data-i='fav']").textContent    = state.ui.fav;
-  $("[data-i='g_title']").textContent= state.ui.g_title;
-  $("[data-i='dlg_title']").textContent= state.ui.dlg_title;
   $("#searchInput").placeholder = state.ui.placeholders.search;
   $("#footLang").textContent = state.ui.foot;
-
-  buildLessons(); buildDictionary(); buildFlashcards(); buildGrammar(); buildDialogs();
-}
-document.querySelectorAll(".lang-switch button").forEach(b=>{
-  b.addEventListener("click", ()=>{
-    document.querySelectorAll(".lang-switch button").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    lang = b.dataset.lang; localStorage.setItem("ui-lang", lang);
-    applyUI();
-  });
-});
-
-/* ========= НАВИГАЦИЯ ========= */
-document.querySelectorAll("#navTabs button").forEach(b=>{
-  b.addEventListener("click", ()=>{
-    state.tab = b.dataset.tab;
-    document.querySelectorAll("#navTabs button").forEach(x=>x.classList.toggle("active", x===b));
-    ["lessons","dictionary","flashcards","grammar","dialogs"].forEach(id=>{
-      $("#view-"+id).hidden = id!==state.tab;
-    });
-  });
-});
-
-/* ========= УРОКИ ========= */
-function buildLessons(){
-  const wrap = $("#lessonsList"); wrap.innerHTML="";
-  const all = [];
-  topicKeys.forEach(tk=>{
-    topics[tk].lessons?.forEach(ls=> all.push({tk,ls}));
-  });
-  $("#lessCount").textContent = all.length+" урок(ов)";
-  all.forEach(({tk,ls})=>{
-    const el = document.createElement("div");
-    el.className="lesson";
-    const ch = (state.progress[tk]?.[ls.title.de])? "✅":"⭕";
-    el.innerHTML = `
-      <div style="font-size:24px">${ch}</div>
-      <div>
-        <div class="kicker">${topics[tk].name[lang]||topics[tk].name.ru}</div>
-        <div class="title">${ls.title[lang]||ls.title.ru}</div>
-        <ul style="margin:8px 0 0;padding-left:18px">
-          ${ls.points.map(p=>`<li>${p.de} — <span class="small">${p[lang]||p.ru}</span></li>`).join("")}
-        </ul>
-        <div class="row" style="margin-top:8px;gap:8px">
-          <button class="btn primary" data-done="${tk}|${ls.title.de}">Отметить</button>
-          <button class="btn" data-tts="${ls.points[0].de}">🔊</button>
-        </div>
-      </div>`;
-    wrap.appendChild(el);
-  });
-  wrap.querySelectorAll("[data-done]").forEach(btn=>{
-    btn.onclick=()=>{
-      const [tk,key] = btn.dataset.done.split("|");
-      state.progress[tk] = state.progress[tk]||{};
-      state.progress[tk][key]=true;
-      localStorage.setItem("progress", JSON.stringify(state.progress));
-      buildLessons(); updateProgStat();
+  
+  // Обновляем тексты в интерфейсе
+  document.querySelectorAll("[data-i]").forEach(el => {
+    const key = el.dataset.i;
+    if (state.ui[key]) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = state.ui[key];
+      } else {
+        el.textContent = state.ui[key];
+      }
     }
   });
-  wrap.querySelectorAll("[data-tts]").forEach(btn=>{
-    btn.onclick=()=> speak(btn.dataset.tts,"de-DE");
+  
+  // Обновляем навигацию
+  $$("#navTabs button").forEach(btn => {
+    const tabName = btn.dataset.tab;
+    if (state.ui.tabs[tabName]) {
+      btn.textContent = state.ui.tabs[tabName];
+    }
   });
-  updateProgStat();
+  
+  // Обновляем активную вкладку
+  updateTabIndicator();
+  
+  // Перестраиваем только текущий активный раздел
+  if (state.tab === "lessons") buildLessons();
+  if (state.tab === "dictionary") buildDictionary();
+  if (state.tab === "flashcards") buildFlashcards();
+  if (state.tab === "grammar") buildGrammar();
+  if (state.tab === "dialogs") buildDialogs();
 }
-function updateProgStat(){
-  const all=[]; const done=[];
-  topicKeys.forEach(tk=>{
-    topics[tk].lessons?.forEach(ls=>{
-      all.push(ls.title.de);
-      if(state.progress[tk]?.[ls.title.de]) done.push(ls.title.de);
+
+// Функция для обновления индикатора активной вкладки
+function updateTabIndicator() {
+  const activeTab = $("#navTabs .active");
+  if (!activeTab) return;
+  
+  const indicator = $("#tabIndicator");
+  indicator.style.width = `${activeTab.offsetWidth}px`;
+  indicator.style.transform = `translateX(${activeTab.offsetLeft}px)`;
+}
+
+/* ========= НАВИГАЦИЯ ========= */
+function setupNavigation() {
+  // Языковые переключатели
+  document.querySelectorAll(".lang-switch button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.classList.contains("active")) return;
+      
+      document.querySelectorAll(".lang-switch button").forEach(b => {
+        b.classList.remove("active");
+        b.setAttribute("aria-selected", "false");
+      });
+      
+      btn.classList.add("active");
+      btn.setAttribute("aria-selected", "true");
+      lang = btn.dataset.lang;
+      localStorage.setItem("ui-lang", lang);
+      applyUI();
     });
   });
-  const pct = all.length? Math.round(done.length/all.length*100):0;
-  $("#progStat").textContent = `${pct}% • ${done.length}/${all.length}`;
-}
-$("#startQuick").onclick=()=>{ state.tab="flashcards"; document.querySelectorAll("#navTabs button")[2].click(); };
-$("#resetProgress").onclick=()=>{ if(confirm("Сбросить прогресс?")){ localStorage.removeItem("progress"); state.progress={}; buildLessons(); } };
 
-/* ========= СЛОВАРЬ ========= */
-function buildDictionary(){
-  const sel = $("#dictTopic"); sel.innerHTML="";
-  topicKeys.forEach(k=>{
-    const o=document.createElement("option");
-    o.value=k; o.textContent = topics[k].name[lang]||topics[k].name.ru;
-    sel.appendChild(o);
+  // Переключение разделов
+  document.querySelectorAll("#navTabs button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.classList.contains("active")) return;
+      
+      const tab = btn.dataset.tab;
+      
+      // Обновляем состояние
+      state.tab = tab;
+      
+      // Обновляем UI
+      document.querySelectorAll("#navTabs button").forEach(b => {
+        b.classList.toggle("active", b === btn);
+        b.setAttribute("aria-selected", b === btn ? "true" : "false");
+      });
+      
+      // Показываем нужный раздел
+      ["lessons", "dictionary", "flashcards", "grammar", "dialogs"].forEach(id => {
+        $(`#view-${id}`).hidden = id !== tab;
+      });
+      
+      updateTabIndicator();
+      
+      // Перестраиваем текущий раздел
+      if (tab === "lessons") buildLessons();
+      if (tab === "dictionary") buildDictionary();
+      if (tab === "flashcards") buildFlashcards();
+      if (tab === "grammar") buildGrammar();
+      if (tab === "dialogs") buildDialogs();
+    });
   });
-  sel.value = sel.value || topicKeys[0];
-  renderDict(sel.value);
-
-  sel.onchange = ()=> renderDict(sel.value);
-  $("#searchInput").oninput = ()=> renderDict(sel.value, $("#searchInput").value.trim());
-  $("#exportCSV").onclick = ()=> exportCSV(sel.value);
+  
+  // Инициализация индикатора
+  updateTabIndicator();
+  window.addEventListener('resize', updateTabIndicator);
 }
-function renderDict(tk, q=""){
-  const box = $("#dictBody"); box.innerHTML="";
-  const data = topics[tk].words.filter(w=>{
-    if(!q) return true;
-    q=q.toLowerCase();
-    return w.de.toLowerCase().includes(q) || (w[lang]||w.ru).toLowerCase().includes(q);
+
+/* ========= УРОКИ ========= */
+function buildLessons() {
+  const wrap = $("#lessonsList");
+  wrap.innerHTML = "";
+  
+  const allLessons = [];
+  topicKeys.forEach(tk => {
+    topics[tk].lessons?.forEach(ls => allLessons.push({ tk, ls }));
   });
-  data.forEach(w=>{
-    const it=document.createElement("div"); it.className="dict-item";
-    const favId = `${w.de}|${w.ru}`;
-    const isFav = state.flash.favorites.some(x=>x.id===favId);
-    it.innerHTML = `
-      <div class="row" style="justify-content:space-between;gap:12px">
-        <div><b>${w.de}</b><div class="small">${w[lang]||w.ru}</div></div>
-        <div class="row">
-          <button class="btn" title="Озвучить" data-say="${w.de}">🔊</button>
-          <button class="btn favorite" title="В избранное" data-fav='${JSON.stringify({...w,id:favId})}'>${isFav?"★":"☆"}</button>
+  
+  $("#lessCount").textContent = `${allLessons.length} ${getLessonCountText(allLessons.length)}`;
+  
+  if (allLessons.length === 0) {
+    wrap.innerHTML = `<div class="lesson" style="opacity:0.7">${state.ui.noData}</div>`;
+    return;
+  }
+  
+  allLessons.forEach(({ tk, ls }, index) => {
+    const isCompleted = state.progress[tk]?.[ls.title.de];
+    const progressIcon = isCompleted ? "✅" : "⭕";
+    
+    const el = document.createElement("div");
+    el.className = "lesson";
+    el.dataset.lessonKey = tk;
+    el.dataset.lessonTitle = ls.title.de;
+    
+    el.innerHTML = `
+      <div style="font-size:24px" aria-hidden="true">${progressIcon}</div>
+      <div>
+        <div class="kicker">${escapeHTML(topics[tk].name[lang] || topics[tk].name.ru)}</div>
+        <div class="title">${escapeHTML(ls.title[lang] || ls.title.ru)}</div>
+        <ul style="margin:8px 0 0;padding-left:18px">
+          ${ls.points.map(p => `
+            <li>
+              <span class="de">${escapeHTML(p.de)}</span> 
+              — 
+              <span class="small">${escapeHTML(p[lang] || p.ru)}</span>
+            </li>
+          `).join("")}
+        </ul>
+        <div class="row" style="margin-top:8px;gap:8px">
+          <button class="btn primary" data-action="complete-lesson">
+            ${isCompleted ? "Перейти" : "Отметить"}
+          </button>
+          <button class="btn" data-action="speak-lesson">
+            <span aria-hidden="true">🔊</span>
+            <span class="sr-only">Озвучить пример</span>
+          </button>
         </div>
       </div>`;
-    box.appendChild(it);
+    
+    wrap.appendChild(el);
   });
-  box.querySelectorAll("[data-say]").forEach(b=> b.onclick=()=> speak(b.dataset.say,"de-DE"));
-  box.querySelectorAll("[data-fav]").forEach(b=> b.onclick=()=>{
-    const item = JSON.parse(b.dataset.fav);
-    const idx = state.flash.favorites.findIndex(x=>x.id===item.id);
-    if(idx>-1) state.flash.favorites.splice(idx,1); else state.flash.favorites.push(item);
-    localStorage.setItem("fav-cards", JSON.stringify(state.flash.favorites));
-    buildFlashcards(); renderDict(tk, $("#searchInput").value.trim());
-  });
+  
+  // Делегирование событий для уроков
+  wrap.addEventListener("click", handleLessonsClick);
+  updateProgStat();
 }
-function exportCSV(tk){
-  const rows = [["DE", lang.toUpperCase()]];
-  topics[tk].words.forEach(w=> rows.push([w.de, w[lang]||w.ru]));
-  const csv = rows.map(r=> r.map(x=> `"${(x||"").replaceAll('"','""')}"`).join(",")).join("\n");
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
-  a.download=`${topics[tk].name[lang]||topics[tk].name.ru}.csv`;
-  a.click();
+
+function handleLessonsClick(e) {
+  const button = e.target.closest("button");
+  if (!button) return;
+  
+  const lessonEl = button.closest(".lesson");
+  const tk = lessonEl.dataset.lessonKey;
+  const title = lessonEl.dataset.lessonTitle;
+  
+  if (button.dataset.action === "complete-lesson") {
+    toggleLessonCompletion(tk, title);
+  } 
+  else if (button.dataset.action === "speak-lesson") {
+    const deText = lessonEl.querySelector(".de").textContent;
+    speak(deText, "de-DE");
+  }
+}
+
+function toggleLessonCompletion(tk, title) {
+  state.progress[tk] = state.progress[tk] || {};
+  state.progress[tk][title] = !state.progress[tk][title];
+  localStorage.setItem("progress", JSON.stringify(state.progress));
+  buildLessons();
+  updateProgStat();
+}
+
+function getLessonCountText(count) {
+  if (count % 10 === 1 && count % 100 !== 11) return "урок";
+  if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return "урока";
+  return "уроков";
+}
+
+function updateProgStat() {
+  const all = [];
+  const done = [];
+  
+  topicKeys.forEach(tk => {
+    topics[tk].lessons?.forEach(ls => {
+      all.push(ls.title.de);
+      if (state.progress[tk]?.[ls.title.de]) done.push(ls.title.de);
+    });
+  });
+  
+  const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
+  $("#progStat").textContent = `${pct}% • ${done.length}/${all.length}`;
+}
+
+$("#startQuick").addEventListener("click", () => {
+  state.tab = "flashcards";
+  document.querySelectorAll("#navTabs button[data-tab='flashcards']")[0].click();
+});
+
+$("#resetProgress").addEventListener("click", () => {
+  if (confirm(state.ui.resetConfirm)) {
+    localStorage.removeItem("progress");
+    state.progress = {};
+    buildLessons();
+  }
+});
+
+/* ========= СЛОВАРЬ ========= */
+function buildDictionary() {
+  const sel = $("#dictTopic");
+  sel.innerHTML = "";
+  
+  topicKeys.forEach(k => {
+    const option = document.createElement("option");
+    option.value = k;
+    option.textContent = escapeHTML(topics[k].name[lang] || topics[k].name.ru);
+    sel.appendChild(option);
+  });
+  
+  if (sel.options.length > 0) {
+    sel.value = state.flash.topic || sel.options[0].value;
+  } else {
+    sel.innerHTML = `<option value="">${state.ui.noData}</option>`;
+    $("#dictBody").innerHTML = `<div class="dict-item">${state.ui.noData}</div>`;
+    return;
+  }
+  
+  renderDict(sel.value);
+  sel.addEventListener("change", () => renderDict(sel.value));
+  
+  const searchInput = $("#searchInput");
+  searchInput.value = "";
+  searchInput.addEventListener("input", () => renderDict(sel.value, searchInput.value.trim()));
+  
+  $("#exportCSV").addEventListener("click", () => exportCSV(sel.value));
+}
+
+function renderDict(tk, query = "") {
+  const box = $("#dictBody");
+  box.innerHTML = "";
+  
+  if (!topics[tk] || !topics[tk].words) {
+    box.innerHTML = `<div class="dict-item">${state.ui.noData}</div>`;
+    return;
+  }
+  
+  const data = topics[tk].words.filter(w => {
+    if (!query) return true;
+    const q = query.toLowerCase();
+    return w.de.toLowerCase().includes(q) || 
+           (w[lang] || w.ru).toLowerCase().includes(q);
+  });
+  
+  if (data.length === 0) {
+    box.innerHTML = `<div class="dict-item">${state.ui.noData}</div>`;
+    return;
+  }
+  
+  data.forEach(w => {
+    const favId = `${w.de}|${w.ru}`;
+    const isFav = state.flash.favorites.some(x => x.id === favId);
+    
+    const item = document.createElement("div");
+    item.className = "dict-item";
+    item.innerHTML = `
+      <div class="row" style="justify-content:space-between;gap:12px">
+        <div>
+          <b>${escapeHTML(w.de)}</b>
+          <div class="small">${escapeHTML(w[lang] || w.ru)}</div>
+        </div>
+        <div class="row">
+          <button class="btn" aria-label="Озвучить слово" data-action="speak-word" data-word="${escapeHTML(w.de)}">
+            <span aria-hidden="true">🔊</span>
+          </button>
+          <button class="btn favorite" aria-label="${isFav ? 'Убрать из избранного' : 'Добавить в избранное'}" 
+                  data-action="toggle-favorite" data-word='${JSON.stringify({...w, id: favId})}'>
+            ${isFav ? "★" : "☆"}
+          </button>
+        </div>
+      </div>`;
+    
+    box.appendChild(item);
+  });
 }
 
 /* ========= КАРТОЧКИ ========= */
-function buildFlashcards(){
-  const sel = $("#fcTopic"); sel.innerHTML="";
-  topicKeys.forEach(k=>{
-    const o=document.createElement("option");
-    o.value=k; o.textContent = topics[k].name[lang]||topics[k].name.ru;
-    sel.appendChild(o);
+function buildFlashcards() {
+  const sel = $("#fcTopic");
+  sel.innerHTML = "";
+  
+  topicKeys.forEach(k => {
+    const option = document.createElement("option");
+    option.value = k;
+    option.textContent = escapeHTML(topics[k].name[lang] || topics[k].name.ru);
+    sel.appendChild(option);
   });
-  if(!topics[state.flash.topic]) state.flash.topic = topicKeys[0];
-  sel.value = state.flash.topic;
-  sel.onchange = ()=>{ state.flash.topic=sel.value; resetDeck(); drawCard(); };
-
-  $("#fcSide").value = state.flash.side; 
-  $("#fcSide").onchange = ()=>{ state.flash.side=$("#fcSide").value; drawCard(); };
-
-  $("#prevCard").onclick=()=> move(-1);
-  $("#nextCard").onclick=()=> move(1);
-  $("#flipCard").onclick=()=> flip();
-  $("#shuffleCard").onclick=()=>{ shuffleDeck(); drawCard(); };
-  $("#ttsCard").onclick=()=> sayCurrent();
-  $("#favCard").onclick=()=> toggleFavCurrent();
-
+  
+  if (sel.options.length > 0) {
+    // Сохраняем текущую тему, если она существует
+    if (topics[state.flash.topic]) {
+      sel.value = state.flash.topic;
+    } else {
+      state.flash.topic = sel.options[0].value;
+      sel.value = state.flash.topic;
+    }
+  } else {
+    sel.innerHTML = `<option value="">${state.ui.noData}</option>`;
+    $("#flashcard").textContent = state.ui.noData;
+    $("#fcPos").textContent = "0/0";
+    return;
+  }
+  
+  $("#fcSide").value = state.flash.side;
+  
+  // Сброс состояния карточек при смене темы
+  sel.addEventListener("change", () => {
+    state.flash.topic = sel.value;
+    resetDeck();
+    drawCard();
+    renderFavorites();
+  });
+  
+  $("#fcSide").addEventListener("change", () => {
+    state.flash.side = $("#fcSide").value;
+    drawCard();
+  });
+  
   resetDeck();
   drawCard();
   renderFavorites();
 }
-function deckData(){
-  return topics[state.flash.topic].words.map(w=>({front:w.de, back:w[lang]||w.ru, raw:w}));
+
+function deckData() {
+  return topics[state.flash.topic]?.words?.map(w => ({
+    front: w.de, 
+    back: w[lang] || w.ru, 
+    raw: w
+  })) || [];
 }
-function resetDeck(){
-  state.flash.idx=0;
+
+function resetDeck() {
+  state.flash.idx = 0;
   const arr = deckData();
-  state.flash.order = [...arr.keys()];
+  state.flash.order = [...Array(arr.length).keys()];
   shuffleDeck();
 }
-function shuffleDeck(){
-  for(let i=state.flash.order.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [state.flash.order[i],state.flash.order[j]]=[state.flash.order[j],state.flash.order[i]];
+
+function shuffleDeck() {
+  for (let i = state.flash.order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [state.flash.order[i], state.flash.order[j]] = [state.flash.order[j], state.flash.order[i]];
   }
 }
-function drawCard(){
+
+function drawCard() {
   const data = deckData();
   const total = data.length;
-  if(total===0){ $("#flashcard").textContent="—"; $("#fcPos").textContent="0/0"; return; }
-  if(state.flash.idx<0) state.flash.idx=total-1;
-  if(state.flash.idx>=total) state.flash.idx=0;
-
+  
+  if (total === 0) {
+    $("#flashcard").textContent = state.ui.noData;
+    $("#fcPos").textContent = "0/0";
+    return;
+  }
+  
+  // Корректируем индекс, если вышли за границы
+  if (state.flash.idx < 0) state.flash.idx = total - 1;
+  if (state.flash.idx >= total) state.flash.idx = 0;
+  
   const item = data[state.flash.order[state.flash.idx]];
-  const mode = state.flash.side==="mix" ? (Math.random()<.5 ? "front":"back") : state.flash.side;
+  const mode = state.flash.side === "mix" ? 
+    (Math.random() < 0.5 ? "front" : "back") : 
+    state.flash.side;
+  
   $("#flashcard").dataset.show = mode;
-  $("#flashcard").textContent = (mode==="front") ? item.front : item.back;
-  $("#fcPos").textContent = `${state.flash.idx+1}/${total}`;
+  $("#flashcard").textContent = mode === "front" ? item.front : item.back;
+  $("#fcPos").textContent = `${state.flash.idx + 1}/${total}`;
 }
-function move(d){ state.flash.idx += d; drawCard(); }
-function flip(){
-  const fc=$("#flashcard");
-  fc.dataset.show = (fc.dataset.show==="front")?"back":"front";
-  const item = deckData()[state.flash.order[state.flash.idx]];
-  fc.textContent = (fc.dataset.show==="front")? item.front : item.back;
+
+function move(direction) {
+  state.flash.idx += direction;
+  drawCard();
 }
-function sayCurrent(){
-  const item = deckData()[state.flash.order[state.flash.idx]];
-  const text = ($("#flashcard").dataset.show==="front")? item.front : item.raw.de; // всегда немецкий для произношения
-  speak(text,"de-DE");
+
+function flip() {
+  const fc = $("#flashcard");
+  const mode = fc.dataset.show === "front" ? "back" : "front";
+  fc.dataset.show = mode;
+  
+  const data = deckData();
+  const item = data[state.flash.order[state.flash.idx]];
+  fc.textContent = mode === "front" ? item.front : item.back;
 }
-function toggleFavCurrent(){
-  const item = deckData()[state.flash.order[state.flash.idx]].raw;
+
+function sayCurrent() {
+  const data = deckData();
+  if (data.length === 0) return;
+  
+  const item = data[state.flash.order[state.flash.idx]];
+  const text = $("#flashcard").dataset.show === "front" ? item.front : item.raw.de;
+  speak(text, "de-DE");
+}
+
+function toggleFavCurrent() {
+  const data = deckData();
+  if (data.length === 0) return;
+  
+  const item = data[state.flash.order[state.flash.idx]].raw;
   const id = `${item.de}|${item.ru}`;
-  const idx = state.flash.favorites.findIndex(x=>x.id===id);
-  if(idx>-1) state.flash.favorites.splice(idx,1);
-  else state.flash.favorites.push({...item, id});
+  
+  const idx = state.flash.favorites.findIndex(x => x.id === id);
+  if (idx > -1) {
+    state.flash.favorites.splice(idx, 1);
+  } else {
+    state.flash.favorites.push({...item, id});
+  }
+  
   localStorage.setItem("fav-cards", JSON.stringify(state.flash.favorites));
   renderFavorites();
+  updateFavButton();
 }
-function renderFavorites(){
-  const box=$("#favorites"); box.innerHTML="";
-  state.flash.favorites.forEach(f=>{
-    const it=document.createElement("div"); it.className="dict-item";
-    it.innerHTML=`<div class="row" style="justify-content:space-between">
-      <div><b>${f.de}</b><div class="small">${f[lang]||f.ru}</div></div>
-      <div class="row">
-        <button class="btn" data-say="${f.de}">🔊</button>
-        <button class="btn" data-rem="${f.id}">✕</button>
-      </div>
-    </div>`;
-    box.appendChild(it);
+
+function updateFavButton() {
+  const data = deckData();
+  if (data.length === 0) return;
+  
+  const item = data[state.flash.order[state.flash.idx]].raw;
+  const id = `${item.de}|${item.ru}`;
+  const isFav = state.flash.favorites.some(x => x.id === id);
+  
+  $("#favCard").innerHTML = isFav ? "★" : "☆";
+  $("#favCard").setAttribute("aria-label", isFav ? 
+    "Убрать из избранного" : "Добавить в избранное");
+}
+
+function renderFavorites() {
+  const box = $("#favorites");
+  box.innerHTML = "";
+  
+  if (state.flash.favorites.length === 0) {
+    box.innerHTML = `<div class="dict-item">${state.ui.noData}</div>`;
+    return;
+  }
+  
+  state.flash.favorites.forEach(f => {
+    const item = document.createElement("div");
+    item.className = "dict-item";
+    item.innerHTML = `
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <b>${escapeHTML(f.de)}</b>
+          <div class="small">${escapeHTML(f[lang] || f.ru)}</div>
+        </div>
+        <div class="row">
+          <button class="btn" aria-label="Озвучить слово" data-action="speak-fav" data-word="${escapeHTML(f.de)}">
+            <span aria-hidden="true">🔊</span>
+          </button>
+          <button class="btn" aria-label="Удалить из избранного" data-action="remove-fav" data-id="${escapeHTML(f.id)}">✕</button>
+        </div>
+      </div>`;
+    
+    box.appendChild(item);
   });
-  box.querySelectorAll("[data-say]").forEach(b=> b.onclick=()=> speak(b.dataset.say,"de-DE"));
-  box.querySelectorAll("[data-rem]").forEach(b=> b.onclick=()=>{
-    const id=b.dataset.rem; state.flash.favorites=state.flash.favorites.filter(x=>x.id!==id);
-    localStorage.setItem("fav-cards", JSON.stringify(state.flash.favorites)); renderFavorites();
-  });
+  
+  // Делегирование событий для избранного
+  box.addEventListener("click", handleFavoritesClick);
+  updateFavButton();
+}
+
+function handleFavoritesClick(e) {
+  const button = e.target.closest("button");
+  if (!button) return;
+  
+  if (button.dataset.action === "speak-fav") {
+    speak(button.dataset.word, "de-DE");
+  } 
+  else if (button.dataset.action === "remove-fav") {
+    const id = button.dataset.id;
+    state.flash.favorites = state.flash.favorites.filter(x => x.id !== id);
+    localStorage.setItem("fav-cards", JSON.stringify(state.flash.favorites));
+    renderFavorites();
+    drawCard(); // Обновляем текущую карточку
+  }
 }
 
 /* ========= ГРАММАТИКА ========= */
-function buildGrammar(){
-  const sel=$("#gramTopic"); sel.innerHTML="";
-  topicKeys.forEach(k=>{
-    topics[k].grammar?.forEach((g,i)=>{
-      const o=document.createElement("option");
-      o.value=`${k}|${i}`;
-      o.textContent=`${topics[k].name[lang]||topics[k].name.ru} — ${g.title[lang]||g.title.ru}`;
-      sel.appendChild(o);
-    })
+function buildGrammar() {
+  const sel = $("#gramTopic");
+  sel.innerHTML = "";
+  
+  let hasGrammar = false;
+  
+  topicKeys.forEach(tk => {
+    topics[tk].grammar?.forEach((g, i) => {
+      hasGrammar = true;
+      const option = document.createElement("option");
+      option.value = `${tk}|${i}`;
+      option.textContent = `${escapeHTML(topics[tk].name[lang] || topics[tk].name.ru)} — ${escapeHTML(g.title[lang] || g.title.ru)}`;
+      sel.appendChild(option);
+    });
   });
-  sel.onchange=renderGrammar;
-  if(sel.options.length) sel.selectedIndex=0;
+  
+  if (!hasGrammar) {
+    sel.innerHTML = `<option value="">${state.ui.noData}</option>`;
+    $("#grammarBody").innerHTML = `<p class="small">${state.ui.noData}</p>`;
+    return;
+  }
+  
+  sel.addEventListener("change", renderGrammar);
   renderGrammar();
 }
-function renderGrammar(){
-  const val=$("#gramTopic").value;
-  if(!val){ $("#grammarBody").innerHTML="<p class='small'>Добавьте материалы грамматики.</p>"; return; }
-  const [tk,idx]=val.split("|");
-  const g=topics[tk].grammar[idx];
-  $("#grammarBody").innerHTML = g.html[lang]||g.html.ru;
+
+function renderGrammar() {
+  const val = $("#gramTopic").value;
+  const grammarBody = $("#grammarBody");
+  
+  if (!val) {
+    grammarBody.innerHTML = `<p class="small">${state.ui.noData}</p>`;
+    return;
+  }
+  
+  const [tk, idxStr] = val.split("|");
+  const idx = parseInt(idxStr, 10);
+  const grammar = topics[tk]?.grammar?.[idx];
+  
+  if (!grammar) {
+    grammarBody.innerHTML = `<p class="small">${state.ui.noData}</p>`;
+    return;
+  }
+  
+  grammarBody.innerHTML = grammar.html[lang] || grammar.html.ru;
 }
 
 /* ========= ДИАЛОГИ ========= */
-function buildDialogs(){
-  const sel=$("#dlgTopic"); sel.innerHTML="";
-  topicKeys.forEach(k=>{
-    const o=document.createElement("option");
-    o.value=k; o.textContent=topics[k].name[lang]||topics[k].name.ru;
-    sel.appendChild(o);
+function buildDialogs() {
+  const sel = $("#dlgTopic");
+  sel.innerHTML = "";
+  
+  if (topicKeys.length === 0) {
+    sel.innerHTML = `<option value="">${state.ui.noData}</option>`;
+    $("#dialogsList").innerHTML = `<div class="dialog-item">${state.ui.noData}</div>`;
+    return;
+  }
+  
+  topicKeys.forEach(tk => {
+    const option = document.createElement("option");
+    option.value = tk;
+    option.textContent = escapeHTML(topics[tk].name[lang] || topics[tk].name.ru);
+    sel.appendChild(option);
   });
-  sel.onchange=renderDialogs;
+  
+  sel.addEventListener("change", renderDialogs);
   renderDialogs();
 }
-function renderDialogs(){
-  const tk=$("#dlgTopic").value || topicKeys[0];
-  const body=$("#dialogsList"); body.innerHTML="";
-  (topics[tk].dialogs||[]).forEach(d=>{
-    const div=document.createElement("div"); div.className="dialog-item";
-    div.innerHTML=`<div class="title">${d.title[lang]||d.title.ru}</div>
+
+function renderDialogs() {
+  const tk = $("#dlgTopic").value || topicKeys[0];
+  const body = $("#dialogsList");
+  body.innerHTML = "";
+  
+  if (!topics[tk] || !topics[tk].dialogs || topics[tk].dialogs.length === 0) {
+    body.innerHTML = `<div class="dialog-item">${state.ui.noData}</div>`;
+    return;
+  }
+  
+  topics[tk].dialogs.forEach(d => {
+    const div = document.createElement("div");
+    div.className = "dialog-item";
+    div.innerHTML = `
+      <div class="title">${escapeHTML(d.title[lang] || d.title.ru)}</div>
       <ul style="margin:8px 0 0;padding-left:18px">
-        ${d.lines.map(l=>`<li><b>${l.role}:</b> ${l.de} <span class="small">— ${(l[lang]||l.ru)}</span></li>`).join("")}
+        ${d.lines.map(l => `
+          <li>
+            <b>${escapeHTML(l.role)}:</b> 
+            ${escapeHTML(l.de)} 
+            <span class="small">— ${escapeHTML(l[lang] || l.ru)}</span>
+          </li>
+        `).join("")}
       </ul>`;
+    
     body.appendChild(div);
   });
 }
-$("#playDlg").onclick=()=>{
-  const tk=$("#dlgTopic").value || topicKeys[0];
-  const d=(topics[tk].dialogs||[])[0];
-  if(!d) return;
-  const seq = d.lines.map(l=>l.de).join(". ");
-  speak(seq,"de-DE");
-}
+
+$("#playDlg").addEventListener("click", () => {
+  const tk = $("#dlgTopic").value || topicKeys[0];
+  const dialogs = topics[tk]?.dialogs;
+  
+  if (!dialogs || dialogs.length === 0) return;
+  
+  const firstDialog = dialogs[0];
+  const sequence = firstDialog.lines.map(l => l.de).join(". ");
+  speak(sequence, "de-DE");
+});
 
 /* ========= ОЗВУЧКА ========= */
-function speak(text, locale="de-DE"){
-  if(!("speechSynthesis" in window)) return alert("Озвучка не поддерживается этим браузером");
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang=locale; u.rate=1; u.pitch=1;
-  window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+function speak(text, locale = "de-DE") {
+  if (!("speechSynthesis" in window)) {
+    alert("Озвучка не поддерживается этим браузером");
+    return;
+  }
+  
+  // Проверяем поддержку языка
+  const voices = speechSynthesis.getVoices();
+  const supportedVoices = voices.filter(v => 
+    v.lang.startsWith(locale.split('-')[0])
+  );
+  
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = supportedVoices.length > 0 ? supportedVoices[0].lang : locale;
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
+  
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
 }
-$("#speakBtn").onclick=()=> speak(UI[lang].voiceHint, lang==="de"?"de-DE": lang==="az"?"az-AZ":"ru-RU");
 
-/* ========= МЕЛОЧИ ========= */
+$("#speakBtn").addEventListener("click", () => {
+  const locale = lang === "de" ? "de-DE" : lang === "az" ? "az-AZ" : "ru-RU";
+  speak(state.ui.voiceHint, locale);
+});
+
+/* ========= ЭКСПОРТ В CSV ========= */
+function exportCSV(tk) {
+  try {
+    const data = topics[tk]?.words;
+    if (!data || data.length === 0) {
+      alert(state.ui.exportError);
+      return;
+    }
+    
+    const rows = [["DE", lang.toUpperCase()]];
+    data.forEach(w => rows.push([w.de, w[lang] || w.ru]));
+    
+    const csvContent = rows.map(row => 
+      row.map(cell => 
+        `"${String(cell || "").replace(/"/g, '""')}"`
+      ).join(",")
+    ).join("\n");
+    
+    const blob = new Blob([`\uFEFF${csvContent}`], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${escapeHTML(topics[tk].name[lang] || topics[tk].name.ru)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    console.log("CSV export successful");
+  } catch (error) {
+    console.error("CSV export error:", error);
+    alert(state.ui.exportError);
+  }
+}
+
+/* ========= ОБЩИЕ УЛУЧШЕНИЯ ========= */
+// Делегирование общих событий
+document.addEventListener("click", (e) => {
+  // Обработка кнопок избранного в словаре
+  const favBtn = e.target.closest(".dict-item .favorite");
+  if (favBtn) {
+    const data = JSON.parse(favBtn.dataset.word);
+    const favId = `${data.de}|${data.ru}`;
+    const idx = state.flash.favorites.findIndex(x => x.id === favId);
+    
+    if (idx > -1) {
+      state.flash.favorites.splice(idx, 1);
+    } else {
+      state.flash.favorites.push({...data, id: favId});
+    }
+    
+    localStorage.setItem("fav-cards", JSON.stringify(state.flash.favorites));
+    buildFlashcards();
+    renderDict($("#dictTopic").value, $("#searchInput").value.trim());
+    return;
+  }
+  
+  // Обработка кнопок озвучки в словаре
+  const speakBtn = e.target.closest(".dict-item [data-action='speak-word']");
+  if (speakBtn) {
+    speak(speakBtn.dataset.word, "de-DE");
+    return;
+  }
+});
+
+// Обработка клавиатурных событий для карточек
 $("#flashcard").addEventListener("click", flip);
-$("#flashcard").addEventListener("keydown", e=>{ if(e.key===" "||e.key==="Enter") flip(); });
-$("#year").textContent = new Date().getFullYear();
+$("#flashcard").addEventListener("keydown", e => {
+  if (e.key === " " || e.key === "Enter") {
+    e.preventDefault();
+    flip();
+  }
+});
 
-/* init */
-applyUI();
+// Инициализация
+document.addEventListener("DOMContentLoaded", () => {
+  // Устанавливаем год в футере
+  $("#year").textContent = new Date().getFullYear();
+  
+  // Настраиваем навигацию
+  setupNavigation();
+  
+  // Применяем интерфейс
+  applyUI();
+  
+  // Добавляем обработчик для карточек
+  $("#prevCard").addEventListener("click", () => move(-1));
+  $("#nextCard").addEventListener("click", () => move(1));
+  $("#flipCard").addEventListener("click", flip);
+  $("#shuffleCard").addEventListener("click", () => { shuffleDeck(); drawCard(); });
+  $("#ttsCard").addEventListener("click", sayCurrent);
+  $("#favCard").addEventListener("click", toggleFavCurrent);
+  
+  // Настройки доступности
+  $("#accessibilityToggle").addEventListener("click", (e) => {
+    e.preventDefault();
+    alert("Настройки доступности: увеличить шрифт, высококонтрастный режим и другие опции будут добавлены в будущих версиях.");
+  });
+  
+  // Обработка изменения голосов (необходимо для некоторых браузеров)
+  if ('onvoiceschanged' in speechSynthesis) {
+    speechSynthesis.onvoiceschanged = () => {
+      // Голоса загружены, можно продолжать
+    };
+  }
+});
 </script>
 </body>
 </html>
