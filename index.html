@@ -136,9 +136,7 @@ footer{opacity:.8;margin:40px 0 30px;text-align:center;font-size:.9rem;color:#9f
         <h3 data-i="l_greetings">Приветствия и знакомство</h3>
         <span class="kicker" id="lessCount">5 урок(ов)</span>
       </div>
-      <div id="lessonsList" class="col">
-        <!-- заполняется JS -->
-      </div>
+      <div id="lessonsList" class="col"></div>
     </div>
 
     <div class="card span-6">
@@ -361,17 +359,15 @@ const topics = {
     ]
   }
 };
-// Список тем для карточек/словаря/диалогов
 const topicKeys = Object.keys(topics);
 
 /* ========= СОСТОЯНИЕ ========= */
 const state = {
   tab:"lessons",
   ui: UI[lang],
-  voice: null,
   flash:{
     topic: topicKeys[0],
-    idx:0, side:"front", mix:false, order:[],
+    idx:0, side:"front", order:[],
     favorites: JSON.parse(localStorage.getItem("fav-cards")||"[]")
   },
   progress: JSON.parse(localStorage.getItem("progress")||"{}")
@@ -383,13 +379,11 @@ function applyUI(){
   state.ui = UI[lang];
   $("#appTitle").textContent = state.ui.title;
   $("#badgeTag").textContent = state.ui.tag;
-  // Tabs
   $$("#navTabs button").forEach(b=>{
     const k=b.dataset.tab;
     b.textContent = state.ui.tabs[k];
     b.classList.toggle("active", state.tab===k);
   });
-  // headers
   $("[data-i='l_greetings']").textContent = state.ui.l_greetings;
   $("[data-i='l_basics']").textContent = state.ui.l_basics;
   $("[data-i='d_title']").textContent = state.ui.d_title;
@@ -402,27 +396,22 @@ function applyUI(){
   $("#searchInput").placeholder = state.ui.placeholders.search;
   $("#footLang").textContent = state.ui.foot;
 
-  // Перепостроить данные-зависимые списки
-  buildLessons();
-  buildDictionary();
-  buildFlashcards();
-  buildGrammar();
-  buildDialogs();
+  buildLessons(); buildDictionary(); buildFlashcards(); buildGrammar(); buildDialogs();
 }
-$$("#.lang-switch button").forEach(b=>{
+document.querySelectorAll(".lang-switch button").forEach(b=>{
   b.addEventListener("click", ()=>{
-    $$("#.lang-switch button").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".lang-switch button").forEach(x=>x.classList.remove("active"));
     b.classList.add("active");
     lang = b.dataset.lang; localStorage.setItem("ui-lang", lang);
     applyUI();
   });
 });
 
-/* ========= НАВИГАЦИЯ ПО ВКЛАДКАМ ========= */
-$$("#navTabs button").forEach(b=>{
+/* ========= НАВИГАЦИЯ ========= */
+document.querySelectorAll("#navTabs button").forEach(b=>{
   b.addEventListener("click", ()=>{
     state.tab = b.dataset.tab;
-    $$("#navTabs button").forEach(x=>x.classList.toggle("active", x===b));
+    document.querySelectorAll("#navTabs button").forEach(x=>x.classList.toggle("active", x===b));
     ["lessons","dictionary","flashcards","grammar","dialogs"].forEach(id=>{
       $("#view-"+id).hidden = id!==state.tab;
     });
@@ -434,12 +423,10 @@ function buildLessons(){
   const wrap = $("#lessonsList"); wrap.innerHTML="";
   const all = [];
   topicKeys.forEach(tk=>{
-    topics[tk].lessons?.forEach(ls=>{
-      all.push({tk,ls});
-    });
+    topics[tk].lessons?.forEach(ls=> all.push({tk,ls}));
   });
   $("#lessCount").textContent = all.length+" урок(ов)";
-  all.forEach(({tk,ls},i)=>{
+  all.forEach(({tk,ls})=>{
     const el = document.createElement("div");
     el.className="lesson";
     const ch = (state.progress[tk]?.[ls.title.de])? "✅":"⭕";
@@ -458,15 +445,13 @@ function buildLessons(){
       </div>`;
     wrap.appendChild(el);
   });
-  // Обработчики
   wrap.querySelectorAll("[data-done]").forEach(btn=>{
     btn.onclick=()=>{
       const [tk,key] = btn.dataset.done.split("|");
       state.progress[tk] = state.progress[tk]||{};
       state.progress[tk][key]=true;
       localStorage.setItem("progress", JSON.stringify(state.progress));
-      buildLessons();
-      updateProgStat();
+      buildLessons(); updateProgStat();
     }
   });
   wrap.querySelectorAll("[data-tts]").forEach(btn=>{
@@ -485,7 +470,7 @@ function updateProgStat(){
   const pct = all.length? Math.round(done.length/all.length*100):0;
   $("#progStat").textContent = `${pct}% • ${done.length}/${all.length}`;
 }
-$("#startQuick").onclick=()=>{ state.tab="flashcards"; $("#view-lessons").hidden=true; $("#view-flashcards").hidden=false; $$("#navTabs button")[2].click(); };
+$("#startQuick").onclick=()=>{ state.tab="flashcards"; document.querySelectorAll("#navTabs button")[2].click(); };
 $("#resetProgress").onclick=()=>{ if(confirm("Сбросить прогресс?")){ localStorage.removeItem("progress"); state.progress={}; buildLessons(); } };
 
 /* ========= СЛОВАРЬ ========= */
@@ -530,8 +515,7 @@ function renderDict(tk, q=""){
     const idx = state.flash.favorites.findIndex(x=>x.id===item.id);
     if(idx>-1) state.flash.favorites.splice(idx,1); else state.flash.favorites.push(item);
     localStorage.setItem("fav-cards", JSON.stringify(state.flash.favorites));
-    buildFlashcards();
-    renderDict(tk, $("#searchInput").value.trim());
+    buildFlashcards(); renderDict(tk, $("#searchInput").value.trim());
   });
 }
 function exportCSV(tk){
@@ -702,7 +686,7 @@ function speak(text, locale="de-DE"){
 }
 $("#speakBtn").onclick=()=> speak(UI[lang].voiceHint, lang==="de"?"de-DE": lang==="az"?"az-AZ":"ru-RU");
 
-/* ========= ВСЯКИЕ МЕЛОЧИ ========= */
+/* ========= МЕЛОЧИ ========= */
 $("#flashcard").addEventListener("click", flip);
 $("#flashcard").addEventListener("keydown", e=>{ if(e.key===" "||e.key==="Enter") flip(); });
 $("#year").textContent = new Date().getFullYear();
